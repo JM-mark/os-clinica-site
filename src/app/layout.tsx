@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     siteName: "OS Clínica",
-    images: [{ url: `${base}/og.png`, width: 1200, height: 630, alt: "OS Clínica — Odontologia Integrada em Valinhos/SP" }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "OS Clínica — Odontologia Integrada em Valinhos/SP" }],
   },
   icons: { icon: `${base}/icon.png`, apple: `${base}/apple-touch-icon.png` },
   alternates: { canonical: "/" },
