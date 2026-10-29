@@ -51,8 +51,8 @@ function TreatmentDialog({ t, onClose }: { t: Treatment | null; onClose: () => v
           <span className="grid h-14 w-14 place-items-center rounded-full bg-sage-soft text-brand">
             <Icon name={t.icon} size={26} />
           </span>
-          <h3 id="treat-title" className="mt-6 text-[36px] leading-tight">{t.name}</h3>
-          <p className="mt-4 leading-relaxed text-muted">{t.long}</p>
+          <h3 id="treat-title" className="mt-6 text-[clamp(34px,4vw,46px)] leading-[1.02]">{t.name}</h3>
+          <p className="t-body mt-4">{t.long}</p>
           <ul className="mt-6 space-y-2">
             {t.points.map((p) => (
               <li key={p} className="flex items-center gap-3 text-[15px]"><Check size={18} className="text-brand" /> {p}</li>
@@ -87,47 +87,66 @@ function Showcase({ onOpen }: { onOpen: (t: Treatment) => void }) {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   useMotionValueEvent(scrollYProgress, "change", (p) => setI(Math.min(features.length - 1, Math.max(0, Math.floor(p * features.length)))));
   const f = features[i];
+  const mask = (delay: number) => ({
+    initial: { y: "112%" },
+    animate: { y: "0%" },
+    exit: { y: "-112%" },
+    transition: { duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  });
 
   return (
     <div ref={ref} style={{ height: `${features.length * 85}vh` }} className="relative">
       <div className="sticky top-0 flex h-screen items-center">
-        <div className="container-x grid w-full grid-cols-[0.7fr_1.1fr_1fr] items-center gap-10">
+        <div className="container-x grid w-full grid-cols-[0.62fr_1fr_1fr] items-center gap-10">
           <div>
-            <p className="font-serif text-[88px] leading-none text-brand" aria-live="polite">
-              {pad(i + 1)} <span className="text-ink/30">— {pad(features.length)}</span>
+            {/* contador com giro vertical (odômetro) */}
+            <p className="num-serif flex items-baseline whitespace-nowrap font-serif text-[clamp(60px,5.6vw,88px)] leading-none text-brand" aria-live="polite" aria-label={`${pad(i + 1)} de ${pad(features.length)}`}>
+              <span aria-hidden>0</span>
+              <span aria-hidden className="inline-block h-[1em] overflow-hidden">
+                <motion.span className="flex flex-col" animate={{ y: `-${i * (100 / features.length)}%` }} transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}>
+                  {features.map((_, k) => (
+                    <span key={k} className="block h-[1em] leading-none">{k + 1}</span>
+                  ))}
+                </motion.span>
+              </span>
+              <span aria-hidden className="ml-3 text-ink/30">— {pad(features.length)}</span>
             </p>
             <div className="mt-6 h-px w-full bg-line">
               <motion.div style={{ scaleX: scrollYProgress, transformOrigin: "left" }} className="h-px bg-accent" />
             </div>
           </div>
 
-          <div className="min-h-[300px]">
+          <div className="min-h-[340px]">
             <AnimatePresence mode="wait">
-              <motion.div
-                key={f.id}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -16 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <h3 className="text-[72px] leading-[0.98] xl:text-[84px]">
-                  {f.a}
-                  <br />
-                  <em className="ac">{f.b}</em>
+              <motion.div key={f.id}>
+                <h3 className="text-[clamp(64px,6.6vw,96px)] leading-[0.96]">
+                  <span className="block overflow-hidden pb-[0.08em]"><motion.span className="block" {...mask(0)}>{f.a}</motion.span></span>
+                  <span className="block overflow-hidden pb-[0.08em]"><motion.span className="ac block" {...mask(0.08)}>{f.b}</motion.span></span>
                 </h3>
-                <p className="mt-6 max-w-sm text-[16px] leading-relaxed text-muted">{byId(f.id).short}</p>
-                <button onClick={() => onOpen(byId(f.id))} className="mt-7 inline-flex items-center gap-1.5 text-[15px] font-semibold text-brand">
-                  Saiba mais <ArrowUpRight size={17} />
-                </button>
+                <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+                  <p className="t-lead mt-7">{byId(f.id).short}</p>
+                  <button onClick={() => onOpen(byId(f.id))} className="mt-8 inline-flex items-center gap-2 text-[17px] font-medium text-brand">
+                    <span className="u-link pb-1">Saiba mais</span> <ArrowUpRight size={18} />
+                  </button>
+                </motion.div>
               </motion.div>
             </AnimatePresence>
           </div>
 
-          <div className="relative aspect-[4/5] w-full">
+          {/* fotos empilhadas: a nova entra em cortina (clip-path), de baixo para cima */}
+          <div className="relative h-[72vh] w-full">
             {features.map((x, k) => (
-              <div key={x.id} className="absolute inset-0 transition-opacity duration-700" style={{ opacity: k === i ? 1 : 0 }} aria-hidden={k !== i}>
-                <Photo src={x.photo.src} alt={x.photo.alt} label={`${x.a} ${x.b}`} tone={k} sizes="40vw" className="h-full w-full rounded-[28px]" />
-              </div>
+              <motion.div
+                key={x.id}
+                className="absolute inset-0"
+                style={{ zIndex: k }}
+                initial={false}
+                animate={{ clipPath: k <= i ? "inset(0% 0 0 0)" : "inset(100% 0 0 0)" }}
+                transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}
+                aria-hidden={k !== i}
+              >
+                <Photo src={x.photo.src} alt={x.photo.alt} label={`${x.a} ${x.b}`} tone={k} sizes="42vw" className="h-full w-full rounded-[28px]" />
+              </motion.div>
             ))}
           </div>
         </div>
@@ -142,14 +161,14 @@ function FeatureCards({ onOpen }: { onOpen: (t: Treatment) => void }) {
       {features.map((x, k) => (
         <Reveal key={x.id} delay={(k % 2) * 0.06}>
           <article className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface shadow-[var(--shadow-soft)]">
-            <Photo src={x.photo.src} alt={x.photo.alt} label={`${pad(k + 1)} — ${pad(features.length)}`} tone={k} sizes="(min-width: 640px) 50vw, 100vw" className="aspect-[4/3] w-full" />
+            <Photo reveal src={x.photo.src} alt={x.photo.alt} label={`${pad(k + 1)} — ${pad(features.length)}`} tone={k} sizes="(min-width: 640px) 50vw, 100vw" className="aspect-[4/3] w-full" />
             <div className="p-6">
-              <h3 className="text-[32px] leading-[1.02]">
+              <h3 className="t-h3">
                 {x.a} <em className="ac">{x.b}</em>
               </h3>
-              <p className="mt-2 text-[15px] leading-relaxed text-muted">{byId(x.id).short}</p>
-              <button onClick={() => onOpen(byId(x.id))} className="mt-4 inline-flex items-center gap-1.5 text-[14px] font-semibold text-brand">
-                Saiba mais <ArrowUpRight size={16} />
+              <p className="t-body mt-3">{byId(x.id).short}</p>
+              <button onClick={() => onOpen(byId(x.id))} className="mt-5 inline-flex min-h-11 items-center gap-1.5 text-[16px] font-medium text-brand">
+                <span className="u-link pb-0.5">Saiba mais</span> <ArrowUpRight size={17} />
               </button>
             </div>
           </article>
@@ -190,8 +209,8 @@ export function Treatments() {
                   <Icon name={t.icon} size={20} />
                 </span>
                 <span>
-                  <span className="block font-serif text-[24px] leading-tight">{t.name}</span>
-                  <span className="mt-1 block text-[14px] leading-snug text-muted">{t.short}</span>
+                  <span className="block font-serif text-[28px] leading-[1.05]">{t.name}</span>
+                  <span className="mt-2 block text-[15.5px] leading-[1.5] text-muted">{t.short}</span>
                 </span>
               </button>
             </Reveal>

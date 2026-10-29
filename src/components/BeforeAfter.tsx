@@ -1,24 +1,46 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animate, motion, useInView, useMotionValue, useReducedMotion, useTransform } from "framer-motion";
-import { ChevronsLeftRight } from "lucide-react";
+import { animate, motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { photos, type SitePhoto } from "@/content/photos";
 import { Photo } from "./Photo";
-import { Reveal, SectionHead, useRichMotion } from "./ui";
+import { Magnetic } from "./Interactions";
+import { useBooking } from "./Providers";
+import { useRichMotion } from "./ui";
 
-// O "antes" é uma SIMULAÇÃO: a mesma foto com filtro CSS. TODO trocar por pares reais autorizados pelo paciente.
-const SIM_FILTER = "[filter:sepia(.42)_saturate(1.3)_brightness(.93)]";
+// O "antes" é uma SIMULAÇÃO: a mesma foto com filtro CSS (como o template de referência faz).
+// TODO trocar por pares reais autorizados pelo paciente (Resolução CFO 196/2019) ou desligar FEATURES.beforeAfter.
+const cases: { title: string; photo: SitePhoto; filter: string }[] = [
+  { title: "Clareamento dental", photo: photos.baWhitening, filter: "sepia(.5) saturate(1.4) brightness(.92) contrast(.95)" },
+  { title: "Lentes de contato dental", photo: photos.baLenses, filter: "sepia(.4) saturate(1.25) brightness(.9) hue-rotate(-6deg)" },
+  { title: "Restauração estética", photo: photos.baRestoration, filter: "sepia(.45) saturate(1.3) brightness(.88)" },
+  { title: "Facetas", photo: photos.baVeneers, filter: "sepia(.38) saturate(1.2) brightness(.93) contrast(.96)" },
+];
 
-function Comparer({ title, photo }: { title: string; photo: SitePhoto }) {
+function ToothIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden>
+      <path d="M8 3.5c-2.4 0-4 1.7-4 4.2 0 1.8.7 3 1.1 4.7.5 2 .7 5.6 1.8 5.6 1.3 0 1.1-3 2-4.5.5-.8 1.5-.8 2 0 .9 1.5.7 4.5 2 4.5 1.1 0 1.3-3.6 1.8-5.6.4-1.7 1.1-2.9 1.1-4.7 0-2.5-1.6-4.2-4-4.2-1.4 0-2 .6-3 .6S9.4 3.5 8 3.5Z" />
+    </svg>
+  );
+}
+
+function Comparer({ title, photo, filter, index }: { title: string; photo: SitePhoto; filter: string; index: number }) {
   const reduce = useReducedMotion();
   const rich = useRichMotion();
+  const wrap = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const seen = useInView(box, { once: true, amount: 0.6 });
   const pos = useMotionValue(50);
   const clip = useTransform(pos, (v) => `inset(0 ${100 - v}% 0 0)`);
   const left = useTransform(pos, (v) => `${v}%`);
+
+  // Parallax e rotação leve por card (só desktop): lados com velocidades diferentes.
+  const rightSide = index % 2 === 1;
+  const { scrollYProgress } = useScroll({ target: wrap, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], rich ? (rightSide ? [140, -120] : [90, -170]) : [0, 0]);
+  const rotate = useTransform(scrollYProgress, [0, 0.4], rich ? [rightSide ? 1 : -1, 0] : [0, 0]);
 
   useEffect(
     () =>
@@ -28,41 +50,35 @@ function Comparer({ title, photo }: { title: string; photo: SitePhoto }) {
     [pos],
   );
 
-  // Ao aparecer, o divisor "passeia" uma vez para mostrar que dá para arrastar (só desktop, sem reduced-motion).
+  // Ao aparecer, a linha "passeia" uma vez (50 → 30 → 70 → 50, 2,2s) para mostrar que dá para arrastar.
   useEffect(() => {
     if (!seen || reduce || !rich) return;
-    const a = animate(pos, [50, 28, 72, 50], { duration: 2.2, ease: "easeInOut" });
+    const a = animate(pos, [50, 30, 70, 50], { duration: 2.2, ease: "easeInOut" });
     return () => a.stop();
   }, [seen, reduce, rich, pos]);
 
   return (
-    <Reveal>
+    <motion.div ref={wrap} style={{ y, rotate }} className={rich ? `pointer-events-auto w-[30%] ${rightSide ? "ml-auto mr-[7%]" : "ml-[7%]"}` : "w-full"}>
       <figure>
         <div
           ref={box}
-          className="relative aspect-[4/3] w-full select-none overflow-hidden rounded-[var(--radius-card)] border border-line shadow-[var(--shadow-soft)]"
+          data-cursor="Arraste"
+          className="relative aspect-[4/5] w-full select-none overflow-hidden rounded-[24px] border border-white/60 shadow-[var(--shadow-soft)]"
         >
           <div className="absolute inset-0">
-            <Photo src={photo.src} alt={`${photo.alt} (depois)`} tone={1} sizes="(min-width: 1024px) 45vw, 100vw" className="h-full w-full" />
+            <Photo src={photo.src} alt={`${photo.alt} (depois)`} tone={index} sizes="(min-width: 1024px) 30vw, 100vw" className="h-full w-full" />
           </div>
-          <motion.div style={{ clipPath: clip }} className="absolute inset-0" aria-hidden>
-            <Photo src={photo.src} alt="" tone={1} sizes="(min-width: 1024px) 45vw, 100vw" imgClassName={SIM_FILTER} className="h-full w-full" />
+          <motion.div style={{ clipPath: clip, filter }} className="absolute inset-0" aria-hidden>
+            <Photo src={photo.src} alt="" tone={index} sizes="(min-width: 1024px) 30vw, 100vw" className="h-full w-full" />
           </motion.div>
 
-          <span className="absolute left-4 top-4 z-10 rounded-full bg-black/55 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-white backdrop-blur">
-            Antes
-          </span>
-          <span className="absolute right-4 top-4 z-10 rounded-full bg-white/85 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-brand backdrop-blur">
-            Depois
-          </span>
+          <span className="absolute left-4 top-4 z-10 rounded-full bg-black/50 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-white backdrop-blur">Antes</span>
+          <span className="absolute right-4 top-4 z-10 rounded-full bg-white/85 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-brand backdrop-blur">Depois</span>
 
-          <motion.div
-            style={{ left }}
-            aria-hidden
-            className="pointer-events-none absolute inset-y-0 z-10 w-px -translate-x-1/2 bg-white shadow-[0_0_0_1px_rgb(0_0_0/0.08)]"
-          >
-            <span className="absolute left-1/2 top-1/2 grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white text-brand shadow-lg">
-              <ChevronsLeftRight size={20} strokeWidth={1.5} />
+          {/* linha fina branca + alça de vidro com dente, perto da base (como no template de referência) */}
+          <motion.div style={{ left }} aria-hidden className="pointer-events-none absolute inset-y-0 z-10 w-px -translate-x-1/2 bg-white/70">
+            <span className="absolute left-1/2 top-[82%] grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white bg-white/25 text-white shadow-lg backdrop-blur-md">
+              <ToothIcon />
             </span>
           </motion.div>
 
@@ -73,38 +89,88 @@ function Comparer({ title, photo }: { title: string; photo: SitePhoto }) {
             max={100}
             step={1}
             defaultValue={50}
+            data-cursor="Arraste"
             aria-label={`Comparar antes e depois: ${title}`}
             onChange={(e) => pos.set(Number(e.target.value))}
             className="absolute inset-0 z-20 h-full w-full cursor-ew-resize opacity-0"
           />
         </div>
-        <figcaption className="mt-4 flex items-baseline justify-between gap-4">
-          <span className="font-serif text-[28px] leading-tight">{title}</span>
-          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">Simulação ilustrativa</span>
+        <figcaption className="mt-5">
+          <span className="block font-serif text-[clamp(32px,3vw,40px)] leading-[1.02]">{title}</span>
+          <span className="mt-2 block text-[11px] font-medium uppercase tracking-[0.14em] text-muted">Simulação ilustrativa</span>
         </figcaption>
       </figure>
-    </Reveal>
+    </motion.div>
+  );
+}
+
+function Title({ blur }: { blur?: boolean }) {
+  const { startBooking } = useBooking();
+  return (
+    <div className="mx-auto max-w-[44rem] px-5 text-center">
+      <p className="eyebrow">Transformações</p>
+      <h2 className="t-h2 mt-5">
+        Sorrisos <em className="ac">que mudam</em>.
+      </h2>
+      <p className="t-lead mx-auto mt-6">
+        Arraste a linha de cada foto e compare. São simulações ilustrativas para mostrar como o cuidado planejado pode transformar o sorriso, sem prometer resultado.
+      </p>
+      <div className="mt-8 flex justify-center">
+        <Magnetic>
+          <button onClick={() => startBooking()} className="btn btn-primary" data-blur={blur ? "1" : undefined}>
+            Agendar avaliação
+          </button>
+        </Magnetic>
+      </div>
+    </div>
   );
 }
 
 export function BeforeAfter() {
+  const rich = useRichMotion();
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  // Quanto mais os cards cobrem o título, mais ele desfoca e esmaece.
+  const blur = useTransform(scrollYProgress, [0.08, 0.65], [0, 14]);
+  const op = useTransform(scrollYProgress, [0.08, 0.65], [1, 0.35]);
+  const filter = useTransform(blur, (b) => `blur(${b}px)`);
+
+  const note = (
+    <p className="mx-auto max-w-2xl px-5 text-center text-[13px] leading-relaxed text-muted">
+      Imagens ilustrativas. Casos reais são publicados apenas com autorização do paciente, conforme o CFO. Os resultados variam de pessoa para pessoa.
+    </p>
+  );
+
+  if (!rich) {
+    return (
+      <section id="antes-depois" className="py-20 md:py-28">
+        <Title />
+        <div className="container-x mt-14 grid gap-10 sm:grid-cols-2">
+          {cases.map((c, i) => (
+            <Comparer key={c.title} index={i} {...c} />
+          ))}
+        </div>
+        <div className="mt-10">{note}</div>
+      </section>
+    );
+  }
+
   return (
-    <section id="antes-depois" className="py-20 md:py-28">
-      <div className="container-x">
-        <SectionHead
-          eyebrow="Antes e depois"
-          title={
-            <>
-              Veja a diferença, <em className="ac">arrastando</em>.
-            </>
-          }
-          lead="Imagens ilustrativas desta prévia. Casos reais só são publicados com autorização do paciente, conforme as normas do CFO. Os resultados variam de pessoa para pessoa."
-        />
-        <div className="mt-14 grid gap-8 lg:grid-cols-2">
-          <Comparer title="Clareamento dental" photo={photos.smileA} />
-          <Comparer title="Estética do sorriso" photo={photos.smileB} />
+    <section id="antes-depois" ref={ref} className="relative">
+      <motion.div style={{ filter, opacity: op }} className="sticky top-0 z-0 grid h-screen place-items-center">
+        <Title blur />
+      </motion.div>
+      {/* cards sobem em ziguezague por cima do título fixo */}
+      <div className="pointer-events-none relative z-10 -mt-[100vh] pb-[18vh] pt-[70vh]">
+        <div className="pointer-events-none space-y-[16vh]">
+          {cases.map((c, i) => (
+            <div key={c.title}>
+              <Comparer index={i} {...c} />
+            </div>
+          ))}
         </div>
       </div>
+      <div className="relative z-10 pb-24">{note}</div>
     </section>
   );
 }

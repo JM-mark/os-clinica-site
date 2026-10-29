@@ -1,51 +1,119 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
-import { Icon, Reveal, SectionHead } from "./ui";
+import { useRef, useState } from "react";
+import { ArrowRight } from "lucide-react";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { photos } from "@/content/photos";
+import { Photo } from "./Photo";
+import { Reveal, SectionHead, useRichMotion } from "./ui";
 
 const steps = [
-  { icon: "CalendarCheck", title: "Agendamento online", text: "Escolha o motivo e o melhor horário em menos de 1 minuto." },
-  { icon: "Stethoscope", title: "Avaliação e diagnóstico", text: "Conversa, exame clínico e, se preciso, exames complementares." },
-  { icon: "ClipboardCheck", title: "Plano de tratamento", text: "Proposta clara, por etapas, explicada sem pressa." },
-  { icon: "HeartPulse", title: "Acompanhamento", text: "Cuidado contínuo para manter os resultados ao longo do tempo." },
+  { title: "Agendamento online", text: "Escolha o motivo e o melhor horário em menos de 1 minuto. Você recebe a confirmação pelo WhatsApp.", photo: photos.stepBook },
+  { title: "Avaliação e diagnóstico", text: "Conversa, exame clínico e, se preciso, exames complementares, para entender o seu caso por inteiro.", photo: photos.stepExam },
+  { title: "Plano de tratamento", text: "Uma proposta clara, por etapas e com prioridades, explicada com calma antes de qualquer decisão.", photo: photos.stepPlan },
+  { title: "Acompanhamento", text: "Cuidado contínuo para manter a saúde bucal e os resultados ao longo do tempo.", photo: photos.stepCare },
 ];
+const pad = (n: number) => String(n + 1).padStart(2, "0");
+const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-export function Journey() {
-  const reduce = useReducedMotion();
+// Estilo "Process" do template de referência: 3 colunas (lista, foto, texto) fixas na tela; o scroll avança os passos.
+function Process() {
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 75%", "end 55%"] });
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 });
+  const [i, setI] = useState(0);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  useMotionValueEvent(scrollYProgress, "change", (p) => setI(Math.min(steps.length - 1, Math.max(0, Math.floor(p * steps.length)))));
+
+  const goTo = (k: number) => {
+    const el = ref.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    const span = el.offsetHeight - window.innerHeight;
+    window.scrollTo({ top: top + (k / steps.length) * span + 4, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  };
 
   return (
-    <section id="como-agendar" className="py-20 md:py-28">
-      <div className="container-x">
-        <SectionHead eyebrow="Como funciona" title={<>Da primeira mensagem ao <em className="ac">acompanhamento</em>.</>} center />
-
-        <div ref={ref} className="relative mx-auto mt-16 max-w-3xl">
-          {/* linha-guia: desenha conforme o scroll */}
-          <div aria-hidden className="absolute bottom-6 left-6 top-6 w-px bg-line md:left-1/2" />
-          <motion.div
-            aria-hidden
-            style={{ scaleY: reduce ? 1 : progress, transformOrigin: "top" }}
-            className="absolute bottom-6 left-6 top-6 w-px bg-accent md:left-1/2"
-          />
-          <ol className="space-y-12">
-            {steps.map((s, i) => (
-              <li key={s.title} className={`relative flex gap-6 md:w-1/2 ${i % 2 ? "md:ml-auto md:pl-14" : "md:flex-row-reverse md:pr-14 md:text-right"}`}>
-                <span className={`relative z-10 grid h-12 w-12 shrink-0 place-items-center rounded-full border border-accent/60 bg-bg text-brand md:absolute md:top-0 ${i % 2 ? "md:-left-6" : "md:-right-6"}`}>
-                  <Icon name={s.icon} size={22} />
-                </span>
-                <Reveal delay={0.05} className="pt-1">
-                  <p className="eyebrow">Passo 0{i + 1}</p>
-                  <h3 className="mt-1 text-[32px] leading-none">{s.title}</h3>
-                  <p className="mt-2 max-w-sm text-[15px] leading-relaxed text-muted">{s.text}</p>
-                </Reveal>
+    <div ref={ref} style={{ height: `${steps.length * 80}vh` }} className="relative">
+      <div className="sticky top-0 flex h-screen items-center">
+        <div className="container-x grid w-full grid-cols-[0.9fr_1fr_1fr] items-center gap-12">
+          <ol aria-label="Passos">
+            {steps.map((s, k) => (
+              <li key={s.title}>
+                <button onClick={() => goTo(k)} aria-current={i === k} className={`flex w-full items-center gap-4 py-3 text-left transition-all duration-300 ${i === k ? "text-ink" : "text-ink/30 hover:text-ink/60"}`}>
+                  <ArrowRight size={22} className={`shrink-0 text-brand transition-all ${i === k ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"}`} />
+                  <span className="num text-[13px]">{pad(k)}</span>
+                  <span className="font-serif text-[clamp(26px,2.6vw,36px)] leading-[1.05]">{s.title}</span>
+                </button>
               </li>
             ))}
           </ol>
+
+          <div className="relative h-[60vh] w-full">
+            {steps.map((s, k) => (
+              <motion.div
+                key={s.title}
+                className="absolute inset-0"
+                style={{ zIndex: k }}
+                initial={false}
+                animate={{ clipPath: k <= i ? "inset(0% 0 0 0)" : "inset(100% 0 0 0)" }}
+                transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}
+                aria-hidden={k !== i}
+              >
+                <Photo src={s.photo.src} alt={s.photo.alt} tone={k} sizes="34vw" className="h-full w-full rounded-[28px]" />
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="min-h-[260px]">
+            <AnimatePresence mode="wait">
+              <motion.div key={i}>
+                <p className="num text-[14px] text-muted">Passo {pad(i)}</p>
+                <h3 className="mt-3 text-[clamp(36px,3.6vw,52px)] leading-[1]">
+                  <span className="block overflow-hidden pb-[0.08em]">
+                    <motion.span className="block" initial={{ y: "112%" }} animate={{ y: "0%" }} exit={{ y: "-112%" }} transition={{ duration: 0.5, ease }}>
+                      {steps[i].title}
+                    </motion.span>
+                  </span>
+                </h3>
+                <motion.p className="t-body mt-5" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
+                  {steps[i].text}
+                </motion.p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function StepCards() {
+  return (
+    <div className="container-x mt-12 space-y-6">
+      {steps.map((s, k) => (
+        <Reveal key={s.title}>
+          <article className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface shadow-[var(--shadow-soft)]">
+            <Photo reveal src={s.photo.src} alt={s.photo.alt} tone={k} sizes="100vw" className="aspect-[16/10] w-full" />
+            <div className="p-6">
+              <p className="num text-[13px] text-muted">Passo {pad(k)}</p>
+              <h3 className="t-h3 mt-2">{s.title}</h3>
+              <p className="t-body mt-3">{s.text}</p>
+            </div>
+          </article>
+        </Reveal>
+      ))}
+    </div>
+  );
+}
+
+export function Journey() {
+  const rich = useRichMotion();
+  return (
+    <section id="como-agendar" className="pt-20 md:pt-28">
+      <div className="container-x">
+        <SectionHead eyebrow="Como funciona" title={<>Da primeira mensagem ao <em className="ac">acompanhamento</em>.</>} />
+      </div>
+      {rich ? <Process /> : <StepCards />}
+      <div className="pb-20 md:pb-28" />
     </section>
   );
 }

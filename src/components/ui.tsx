@@ -1,7 +1,7 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useSyncExternalStore } from "react";
 import {
   Activity, AlignHorizontalDistributeCenter, Anchor, Baby, Circle, ClipboardList, Gem, HeartPulse, Layers,
   Moon, Scissors, ShieldCheck, Siren, Smile, Sparkles, Stethoscope, CalendarCheck, ClipboardCheck, Handshake,
@@ -15,7 +15,7 @@ const map: Record<string, React.ComponentType<LucideProps>> = {
 
 export function Icon({ name, ...props }: { name: string } & LucideProps) {
   const C = map[name] ?? Circle;
-  return <C strokeWidth={1.5} aria-hidden {...props} />;
+  return <C strokeWidth={1.25} aria-hidden {...props} />;
 }
 
 export function Reveal({
@@ -55,11 +55,27 @@ export function SectionHead({
   center?: boolean;
 }) {
   return (
-    <Reveal className={center ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
+    <Reveal className={center ? "mx-auto max-w-4xl text-center" : "max-w-4xl"}>
       <p className="eyebrow">{eyebrow}</p>
-      <h2 className="mt-3 text-[42px] leading-[1.02] md:text-[64px]">{title}</h2>
-      {lead && <p className="mt-4 text-[17px] leading-relaxed text-muted">{lead}</p>}
+      <h2 className="t-h2 mt-5">{title}</h2>
+      {lead && <p className={`t-lead mt-6 ${center ? "mx-auto" : ""}`}>{lead}</p>}
     </Reveal>
+  );
+}
+
+/** Hairline dourada que se desenha da esquerda para a direita ao entrar na tela. */
+export function HairLine({ className = "" }: { className?: string }) {
+  const reduce = useReducedMotion();
+  return (
+    <div className={`container-x ${className}`} aria-hidden>
+      <motion.div
+        className="h-px origin-left bg-accent/70"
+        initial={reduce ? false : { scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true, margin: "-10%" }}
+        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+      />
+    </div>
   );
 }
 
@@ -77,6 +93,32 @@ export function useRichMotion(): boolean {
       };
     },
     () => window.matchMedia("(min-width: 1024px)").matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => false,
+  );
+}
+
+/** true em dispositivos com mouse (ponteiro fino) e sem reduced-motion. */
+export function useFinePointer(): boolean {
+  return useSyncExternalStore(
+    (cb) => {
+      const a = window.matchMedia("(pointer: fine)");
+      a.addEventListener("change", cb);
+      return () => a.removeEventListener("change", cb);
+    },
+    () => window.matchMedia("(pointer: fine)").matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => false,
+  );
+}
+
+/** prefers-reduced-motion sem divergência de hidratação (o servidor assume "sem reduzir"). */
+export function useReduce(): boolean {
+  return useSyncExternalStore(
+    (cb) => {
+      const m = window.matchMedia("(prefers-reduced-motion: reduce)");
+      m.addEventListener("change", cb);
+      return () => m.removeEventListener("change", cb);
+    },
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     () => false,
   );
 }

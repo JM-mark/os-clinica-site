@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { CustomCursor, Intro } from "./Interactions";
 
 type BookingCtx = {
   preselected: string | null;
@@ -40,5 +41,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo(() => ({ preselected, startBooking }), [preselected, startBooking]);
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={value}>
+      <Intro />
+      <CustomCursor />
+      {children}
+    </Ctx.Provider>
+  );
 }

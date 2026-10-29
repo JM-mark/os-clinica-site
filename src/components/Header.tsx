@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Plus, X } from "lucide-react";
-import { Logo } from "./Logo";
+import { MessageCircle, Plus, X } from "lucide-react";
+import { Logo, Lockup } from "./Logo";
 import { useBooking } from "./Providers";
 import { clinic, whatsappUrl } from "@/config";
 
@@ -47,8 +47,8 @@ export function Header() {
     <>
       <header className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${past ? "border-b border-line bg-bg/80 backdrop-blur-xl" : ""}`}>
         <div className="container-x flex h-[76px] items-center justify-between">
-          <a href="#topo" aria-label="OS Clínica — início" className={onField ? "text-white" : ""}>
-            <Logo variant={onField ? "white" : "full"} />
+          <a href="#topo" aria-label="OS Clínica — início">
+            <Lockup tone={onField ? "light" : "dark"} />
           </a>
           <div className="flex items-center gap-2">
             <button
@@ -57,10 +57,19 @@ export function Header() {
               aria-haspopup="dialog"
               className={`pill ${glass}`}
             >
-              <Plus size={16} strokeWidth={1.75} /> <span className="font-mono text-[13px]">Menu</span>
+              <Plus size={16} strokeWidth={1.75} /> <span className="text-[14px]">Menu</span>
             </button>
             <a href="#contato" className={`pill ${onField ? "pill-solid" : "pill-dark"} hidden sm:inline-flex`}>
               Contato
+            </a>
+            <a
+              href={whatsappUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Falar no WhatsApp"
+              className={`pill ${onField ? "pill-solid" : "pill-dark"} !px-0 w-11 justify-center sm:hidden`}
+            >
+              <MessageCircle size={18} strokeWidth={1.5} />
             </a>
           </div>
         </div>
@@ -81,7 +90,7 @@ export function Header() {
             <div className="container-x flex h-[76px] items-center justify-between">
               <Logo variant="white" />
               <button onClick={() => setOpen(false)} className="pill pill-glass" aria-label="Fechar menu">
-                <X size={16} strokeWidth={1.75} /> <span className="font-mono text-[13px]">Fechar</span>
+                <X size={16} strokeWidth={1.75} /> <span className="text-[14px]">Fechar</span>
               </button>
             </div>
             <div className="container-x grid gap-12 pb-16 pt-10 md:grid-cols-[1.4fr_1fr]">
@@ -94,7 +103,7 @@ export function Header() {
                         onClick={() => setOpen(false)}
                         className="group flex items-baseline gap-5 py-4 text-[40px] leading-none transition-colors hover:text-accent md:text-[64px]"
                       >
-                        <span className="font-mono text-[12px] tracking-[0.14em] text-white/50">0{i + 1}</span>
+                        <span className="num text-[12px] text-white/50">0{i + 1}</span>
                         <span className="font-serif">{l.label}</span>
                       </a>
                     </li>

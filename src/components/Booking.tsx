@@ -149,8 +149,8 @@ export function Booking() {
       <div className="container-x relative grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
         <Reveal>
           <p className="eyebrow !text-accent">Agendamento online</p>
-          <h2 className="mt-3 text-[44px] leading-[1.02] md:text-[64px]">Agende sua <em className="ac">avaliação</em> em menos de 1 minuto.</h2>
-          <p className="mt-5 max-w-md text-[17px] leading-relaxed text-white/80">
+          <h2 className="t-h2 mt-5">Agende sua <em className="ac">avaliação</em> em menos de 1 minuto.</h2>
+          <p className="t-lead mt-6 !text-white/85">
             Escolha o tratamento, o melhor horário e receba a confirmação pelo WhatsApp.
           </p>
           <ul className="mt-8 space-y-3 text-[15px] text-white/85">
@@ -167,7 +167,7 @@ export function Booking() {
               <div className="flex justify-between text-[12px] font-semibold uppercase tracking-wider text-muted">
                 <span>Etapa {step + 1} de 4</span><span>{stepNames[step]}</span>
               </div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-sage-soft" role="progressbar" aria-valuemin={1} aria-valuemax={4} aria-valuenow={step + 1}>
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-sage-soft" role="progressbar" aria-label="Progresso do agendamento" aria-valuemin={1} aria-valuemax={4} aria-valuenow={step + 1}>
                 <motion.div className="h-full rounded-full bg-brand" animate={{ width: `${((step + 1) / 4) * 100}%` }} transition={{ duration: reduce ? 0 : 0.5 }} />
               </div>
             </div>
