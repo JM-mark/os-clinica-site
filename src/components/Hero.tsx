@@ -28,10 +28,7 @@ function Focal() {
       ))}
       <path d="M130 420 V230 C130 130 205 70 300 70 C395 70 470 130 470 230 V420 Z" fill="url(#arch)" />
       <path d="M160 420 V232 C160 148 220 100 300 100 C380 100 440 148 440 232 V420" fill="none" stroke="#fff" strokeOpacity="0.7" />
-      <text x="300" y="245" textAnchor="middle" fontSize="96" fill="#3f4a38" style={{ fontFamily: "var(--font-display), serif", fontStyle: "italic" }}>
-        OS
-      </text>
-      <path d="M232 268 c40 26 98 26 136 -8" stroke="#c8a97e" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M232 248 c40 26 98 26 136 -8" stroke="#c8a97e" strokeWidth="2" fill="none" strokeLinecap="round" />
     </svg>
   );
 }

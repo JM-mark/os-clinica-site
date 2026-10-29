@@ -28,7 +28,7 @@ npm run build && npm start
 Detalhes da automação em `docs/automacao.md`. Direção de design em `docs/design-direction.md`.
 
 ## TODOs que dependem da clínica
-- [ ] Logo oficial em alta (SVG/PNG, versão horizontal, símbolo, branca) → `public/brand/`
+- [ ] Logo oficial em alta (SVG/PNG, versão horizontal, símbolo, branca) → `public/brand/`. Hoje o site usa uma **recriação vetorial** no estilo do perfil do Instagram (`symbol.svg`, `logo-horizontal*.svg`, `logo-stacked-white.svg`); basta sobrescrever esses arquivos pelos oficiais
 - [ ] Confirmar que (19) 98935-8958 é o WhatsApp da clínica (`WHATSAPP_NUMBER`)
 - [ ] Horário de funcionamento
 - [ ] Confirmar responsável técnica e CRO (hoje: Suzy Vassão, CROSP 26.161; clínica CROSP 17.060 — lidos da bio do Instagram)
