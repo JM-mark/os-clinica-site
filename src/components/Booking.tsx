@@ -122,7 +122,7 @@ export function Booking() {
     // Abre o WhatsApp (funciona sem backend) e envia ao webhook em paralelo.
     window.open(buildWhatsAppUrl(data), "_blank", "noopener,noreferrer");
     try {
-      await fetch("/api/agendamento", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/agendamento`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
     } catch { /* modo prévia: ignora falha de rede */ }
     setSending(false);
     setDone(data);
@@ -268,7 +268,7 @@ export function Booking() {
                           <input type="checkbox" className="mt-1 h-5 w-5 accent-[#3f4a38]" {...register("consent")} />
                           <span>
                             Concordo em compartilhar estes dados com a OS Clínica para fins de agendamento, conforme a{" "}
-                            <a href="/privacidade" target="_blank" className="font-semibold text-brand underline">Política de Privacidade</a> (LGPD).
+                            <a href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/privacidade/`} target="_blank" className="font-semibold text-brand underline">Política de Privacidade</a> (LGPD).
                           </span>
                         </label>
                         {err(errors.consent?.message)}

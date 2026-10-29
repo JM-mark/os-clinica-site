@@ -158,7 +158,7 @@ export function Footer() {
             <p className="eyebrow !text-accent mb-3">Redes</p>
             <a href={clinic.instagram} target="_blank" rel="noopener noreferrer" className="block hover:text-white">Instagram</a>
             <a href={clinic.facebook} target="_blank" rel="noopener noreferrer" className="block hover:text-white">Facebook</a>
-            <a href="/privacidade" className="block hover:text-white">Política de Privacidade</a>
+            <a href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/privacidade/`} className="block hover:text-white">Política de Privacidade</a>
           </div>
         </div>
         <div className="mt-12 border-t border-white/15 pt-6 text-[12px] leading-relaxed text-white/60">
