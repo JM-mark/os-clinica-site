@@ -10,6 +10,8 @@ const display = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["n
 const sans = Instrument_Sans({ subsets: ["latin"], variable: "--font-sans-body", display: "swap" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono-label", display: "swap" });
 
+const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const description =
   "Odontologia integrada em Valinhos/SP: do cuidado preventivo ao sorriso que você quer ter. Agende sua avaliação online em menos de 1 minuto.";
 
@@ -23,7 +25,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     siteName: "OS Clínica",
+    images: [{ url: `${base}/og.png`, width: 1200, height: 630, alt: "OS Clínica — Odontologia Integrada em Valinhos/SP" }],
   },
+  icons: { icon: `${base}/icon.png`, apple: `${base}/apple-touch-icon.png` },
   alternates: { canonical: "/" },
 };
 

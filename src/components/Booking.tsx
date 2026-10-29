@@ -122,7 +122,7 @@ export function Booking() {
     // Abre o WhatsApp (funciona sem backend) e envia ao webhook em paralelo.
     window.open(buildWhatsAppUrl(data), "_blank", "noopener,noreferrer");
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/agendamento`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      await fetch(process.env.NEXT_PUBLIC_BOOKING_WEBHOOK_URL || `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/agendamento`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
     } catch { /* modo prévia: ignora falha de rede */ }
     setSending(false);
     setDone(data);

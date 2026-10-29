@@ -20,12 +20,14 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # Pages é estático: a rota /api/agendamento e as imagens geradas (icon/OG) só existem em hospedagem com servidor.
-      - run: rm -rf src/app/api src/app/icon.tsx src/app/opengraph-image.tsx
+      # Pages é estático: a rota /api/agendamento só existe em hospedagem com servidor.
+      - run: rm -rf src/app/api
       - run: npm run build
         env:
           GITHUB_PAGES: "true"
           NEXT_PUBLIC_SITE_URL: https://jm-mark.github.io/os-clinica-site
+          # Opcional: webhook (n8n/Make/Zapier) chamado direto do navegador no Pages.
+          NEXT_PUBLIC_BOOKING_WEBHOOK_URL: ${{ vars.BOOKING_WEBHOOK_URL }}
       - run: touch out/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
