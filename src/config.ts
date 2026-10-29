@@ -14,7 +14,7 @@ export const FEATURES = {
   // Assistente de triagem (determinístico, sem IA). Desligue aqui.
   triageChat: true,
   // Antes e depois. Hoje usa SIMULAÇÃO ilustrativa. TODO trocar por pares reais autorizados (CFO) ou desligar.
-  beforeAfter: true,
+  beforeAfter: false, // TODO ligar quando os 8 arquivos de public/antes-depois/ existirem
 };
 
 export const clinic = {
@@ -44,8 +44,9 @@ export const clinic = {
   rating: { value: "4,8", count: 105 },
   // TODO confirmar horário de funcionamento com a clínica (o Google indica fechamento às 18:00).
   hours: [
-    { days: "Segunda a sexta", time: "Consulte a clínica" },
-    { days: "Sábado", time: "Consulte a clínica" },
+    // TODO confirmar os horários com a clínica
+    { days: "Segunda a sexta", time: "Horário com agendamento" },
+    { days: "Sábado", time: "Consulte pelo WhatsApp" },
   ],
   // Fonte: bio do Instagram. Confirmar nome e CRO antes de publicar.
   cro: {

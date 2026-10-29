@@ -105,7 +105,7 @@ export function useFinePointer(): boolean {
       a.addEventListener("change", cb);
       return () => a.removeEventListener("change", cb);
     },
-    () => window.matchMedia("(pointer: fine)").matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => window.matchMedia("(hover: hover) and (pointer: fine)").matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     () => false,
   );
 }
@@ -120,5 +120,14 @@ export function useReduce(): boolean {
     },
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     () => false,
+  );
+}
+
+/** Rótulo de botão com efeito "roll" no hover (ver .roll em globals.css). */
+export function Roll({ children }: { children: string }) {
+  return (
+    <span className="roll" data-t={children}>
+      <span>{children}</span>
+    </span>
   );
 }

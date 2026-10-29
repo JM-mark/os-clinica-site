@@ -33,7 +33,7 @@
   --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-display), ui-serif, Georgia, serif;
   --font-accent: var(--font-display), ui-serif, Georgia, serif;
-  --font-mono: var(--font-mono-label), ui-monospace, monospace;
+  --font-mono: var(--font-display), ui-serif, Georgia, serif;
   --radius-card: 24px;
   --shadow-soft: 0 1px 2px rgb(20 24 27 / 0.04), 0 12px 32px -12px rgb(20 24 27 / 0.12);
 }
@@ -63,9 +63,9 @@ p, li, dd { text-wrap: pretty; }
 .t-h1 { font-size: clamp(56px, 9.2vw, 128px); line-height: 0.92; letter-spacing: -0.02em; }
 .t-h2 { font-size: clamp(44px, 6.2vw, 88px); line-height: 0.98; letter-spacing: -0.02em; }
 .t-h3 { font-size: clamp(30px, 3.4vw, 48px); line-height: 1.02; }
-.t-lead { font-size: clamp(18px, 1.5vw, 21px); line-height: 1.55; color: rgb(20 24 27 / 0.8); max-width: 34em; }
-.t-body { font-size: clamp(16px, 1.2vw, 17px); line-height: 1.65; color: var(--muted); max-width: 34em; }
-.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+.t-lead { font-size: clamp(19px, 1.5vw, 21px); line-height: 1.55; font-weight: 300; color: rgb(20 24 27 / 0.82); max-width: 34em; }
+.t-body { font-size: clamp(16px, 1.2vw, 17px); line-height: 1.65; font-weight: 400; color: var(--muted); max-width: 34em; }
+.num { font-family: var(--font-display), ui-serif, Georgia, serif; font-variant-numeric: lining-nums tabular-nums; letter-spacing: 0.02em; }
 .num-serif { font-family: var(--font-display), ui-serif, serif; font-variant-numeric: tabular-nums; }
 
 /* sublinhado que se desenha no hover */
@@ -128,17 +128,29 @@ em.ac, .ac {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   border-radius: 999px;
-  padding: 14px 24px;
-  font-weight: 600;
-  font-size: 15px;
+  height: 52px;
+  padding: 0 28px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   line-height: 1;
+  white-space: nowrap;
   transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
   cursor: pointer;
-  min-height: 48px;
 }
-.btn-primary { background: var(--brand); color: #fff; }
+.btn svg { transition: transform 0.2s ease; }
+.btn:hover svg { transform: translateX(4px); }
+/* efeito "roll": o texto sobe e é substituído por uma cópia que vem de baixo (200ms) */
+.roll { position: relative; display: inline-block; overflow: hidden; height: 1.25em; line-height: 1.25em; vertical-align: middle; }
+.roll > span { display: block; transition: transform 0.2s ease; }
+.roll::after { content: attr(data-t); position: absolute; left: 0; top: 100%; transition: transform 0.2s ease; white-space: nowrap; }
+.btn:hover .roll > span, .pill:hover .roll > span, a:hover > .roll > span, button:hover > .roll > span { transform: translateY(-100%); }
+.btn:hover .roll::after, .pill:hover .roll::after, a:hover > .roll::after, button:hover > .roll::after { transform: translateY(-100%); }
+.btn-primary { background: var(--brand); color: var(--ivory); }
 .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 10px 24px -10px rgb(43 51 38 / 0.6); }
 .btn-ghost { background: transparent; color: var(--brand); border: 1px solid rgb(63 74 56 / 0.35); }
 .btn-ghost:hover { background: var(--sage-soft); }
@@ -151,7 +163,7 @@ em.ac, .ac {
   gap: 12px;
   font-family: var(--font-sans);
   font-size: 12px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   font-weight: 500;
   color: var(--muted);
@@ -173,7 +185,10 @@ em.ac, .ac {
   min-height: 44px;
   padding: 0 18px;
   border-radius: 999px;
-  font-size: 14px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.25s ease, color 0.25s ease;

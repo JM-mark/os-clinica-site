@@ -56,3 +56,13 @@ Adotado do Dentelle: títulos em serifa estreita com itálico, navegação em p�
 ## Fotos
 - Instagram: só artes de marca com texto (sem fotos do espaço ou da equipe). Usadas apenas para extrair a paleta (sálvia `#B7BAA5`, taupe `#B49D8D`).
 - Google Maps (18 fotos): imagens genéricas de banco e uma fachada em baixa resolução, com direitos incertos. Não usadas. Dados reais aproveitados: coordenadas do pin, nota 4,8 (105 avaliações) e fechamento às 18:00.
+
+
+---
+## Ajustes finais (29/10/2026)
+- **Tipografia:** Instrument Serif (títulos e números) + **Jost** (texto, botões e rótulos). Jost é a alternativa open-source mais próxima da Futura (geométrica, "a" de um andar), combinação clássica de serif editorial + sans geométrica em marcas de beleza e moda. A Tenor Sans foi considerada só para botões e rótulos caso a Jost parecesse redonda demais; **não foi necessária**: em caixa alta com tracking aberto a Jost fica elegante nos botões, e no texto corrido (300/400) o peso leve mantém leitura confortável. Geist Mono removida.
+- **Hero:** sem foto de banco no arco; logo grande com anel de texto circular girando e rolando com o scroll. A logo é a recriação vetorial do monograma (TODO trocar pelo arquivo oficial).
+- **A clínica e Como funciona:** só tipografia, sem fotos.
+- **Fotos:** banco de imagens só na vitrine e nas queixas; Clareamento usa close de sorriso com crop na boca.
+- **Instagram:** embeds oficiais dos 4 posts escolhidos (sem scraping).
+- **Antes/depois:** copy nova, sem "simulação". As imagens precisam ser **geradas** (mesma pessoa, só os dentes mudam). Faltam os arquivos em `public/antes-depois/`, por isso `FEATURES.beforeAfter` está desligada. Gerar exigiu créditos que a sessão não tinha (Higgsfield com 0,25; Weave gratuito com 2 execuções).

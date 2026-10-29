@@ -39,3 +39,7 @@ Detalhes da automação em `docs/automacao.md`. Direção de design em `docs/des
 - [ ] Tratamentos marcados `confirmed: false` (clareamento, ortodontia, dentística, odontopediatria, harmonização, DTM)
 - [ ] Coordenadas exatas para o JSON-LD (`clinic.geo`) e domínio final
 - [ ] Revisão jurídica da `/privacidade` e das regras de publicidade do CFO/CRO
+
+## Antes e depois
+Antes de publicar no domínio oficial, trocar por casos reais autorizados pelos pacientes (CFO, Res. 196/2019) ou manter como demonstração de tratamento.
+Os pares ficam em `public/antes-depois/<slug>-antes.webp` e `<slug>-depois.webp` (slugs: restauracao, implante, clareamento, alinhadores). Com os 8 arquivos no lugar, ligue `FEATURES.beforeAfter` em `src/config.ts`.

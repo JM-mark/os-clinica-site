@@ -29,6 +29,7 @@ export function Photo({
   sizes = "(min-width: 1024px) 40vw, 100vw",
   showLabelOnPhoto = false,
   reveal = false,
+  pos,
 }: {
   src?: string;
   alt: string;
@@ -41,6 +42,8 @@ export function Photo({
   showLabelOnPhoto?: boolean;
   /** Entra com máscara de baixo para cima + zoom 1,12 → 1. */
   reveal?: boolean;
+  /** object-position do crop (ex.: "center 60%") */
+  pos?: string;
 }) {
   const [failed, setFailed] = useState(false);
   const reduce = useReducedMotion();
@@ -75,6 +78,7 @@ export function Photo({
             sizes={sizes}
             priority={priority}
             onError={() => setFailed(true)}
+            style={pos ? { objectPosition: pos } : undefined}
             className={`object-cover ${TREAT} ${imgClassName}`}
           />
         </motion.div>

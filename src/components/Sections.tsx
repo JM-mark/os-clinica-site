@@ -5,9 +5,7 @@ import { AnimatePresence, animate, motion, useInView, useReducedMotion, useScrol
 import { ExternalLink, Mail, MapPin, MessageCircle, Phone, Plus, Star } from "lucide-react";
 import { clinic, whatsappUrl } from "@/config";
 import { faq } from "@/content/faq";
-import { photos } from "@/content/photos";
-import { Photo } from "./Photo";
-import { Reveal, SectionHead, useReduce } from "./ui";
+import { Reveal, Roll, SectionHead, useReduce } from "./ui";
 import { Lockup } from "./Logo";
 import { Magnetic } from "./Interactions";
 
@@ -41,43 +39,52 @@ function RatingCounter() {
   );
 }
 
+// Posts reais da clínica via embed oficial do Instagram (sem scraping nem hotlink do CDN).
+// Se existirem capas em public/instagram/post-1.jpg ... post-4.jpg, dá para trocar o iframe por <Photo> com link.
+const IG_POSTS = ["DZplDkZR3fM", "DZsfRS2xyJF", "DZaKLczxSdm", "DXJ7ebOkewZ"];
+
 export function SocialProof() {
-  const ig = [photos.aesthetic, photos.prevention, photos.reception];
   return (
     <section className="py-20 md:py-28">
       <div className="container-x">
         <SectionHead eyebrow="Quem já foi" title={<>Reconhecimento e <em className="ac">rotina</em> da clínica.</>} />
-        <div className="mt-12 grid gap-5 lg:grid-cols-2">
+        <div className="mt-12 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
           <Reveal>
             <div className="flex h-full flex-col justify-between rounded-[var(--radius-card)] bg-brand p-8 text-white sm:p-10">
               <p className="eyebrow !text-accent">Avaliações no Google</p>
               <RatingCounter />
               <a href={clinic.maps} target="_blank" rel="noopener noreferrer" className="btn w-full bg-bg text-brand-dark hover:bg-white sm:w-auto sm:self-start">
-                Ver avaliações no Google <ExternalLink size={16} />
+                <Roll>Ver avaliações</Roll> <ExternalLink size={16} />
               </a>
             </div>
           </Reveal>
           <Reveal delay={0.08}>
-            <div className="h-full rounded-[var(--radius-card)] border border-line bg-surface p-6 shadow-[var(--shadow-soft)] sm:p-9">
+            <div className="flex h-full flex-col justify-between rounded-[var(--radius-card)] border border-line bg-surface p-8 shadow-[var(--shadow-soft)] sm:p-10">
               <p className="eyebrow">Instagram</p>
-              <p className="mt-3 font-serif text-[clamp(32px,3vw,40px)] leading-tight">{clinic.instagramHandle}</p>
-              {/* TODO trocar por fotos reais dos posts (ou feed embed) */}
-              <div className="mt-7 grid grid-cols-3 gap-3">
-                {ig.map((ph, k) => (
-                  <a key={k} href={clinic.instagram} target="_blank" rel="noopener noreferrer" aria-label="Abrir o Instagram da clínica">
-                    <Photo reveal src={ph.src} alt={ph.alt} tone={k} sizes="(min-width: 1024px) 14vw, 30vw" className="aspect-square rounded-[16px]" />
-                  </a>
-                ))}
-              </div>
-              <div className="mt-7">
+              <p className="my-8 font-serif text-[clamp(36px,4vw,56px)] leading-[1]">{clinic.instagramHandle}</p>
+              <div>
                 <Magnetic>
                   <a href={clinic.instagram} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
-                    Seguir no Instagram <ExternalLink size={16} />
+                    <Roll>Seguir no Instagram</Roll> <ExternalLink size={16} />
                   </a>
                 </Magnetic>
               </div>
             </div>
           </Reveal>
+        </div>
+
+        <div className="-mx-5 mt-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] lg:mx-0 lg:grid lg:grid-cols-4 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden">
+          {IG_POSTS.map((code, k) => (
+            <div key={code} className="w-[300px] shrink-0 snap-start lg:w-auto">
+              <iframe
+                src={`https://www.instagram.com/p/${code}/embed`}
+                title={`Publicação ${k + 1} do Instagram da OS Clínica`}
+                loading="lazy"
+                scrolling="no"
+                className="h-[540px] w-full rounded-[20px] border border-line bg-white"
+              />
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -139,8 +146,8 @@ export function Contact() {
               {clinic.hours.map((h) => <p key={h.days} className="flex justify-between py-0.5"><span>{h.days}</span><span className="text-muted">{h.time}</span></p>)}
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <a href={clinic.maps} target="_blank" rel="noopener noreferrer" className="btn btn-primary">Como chegar</a>
-              <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><MessageCircle size={18} /> WhatsApp</a>
+              <a href={clinic.maps} target="_blank" rel="noopener noreferrer" className="btn btn-primary"><Roll>Como chegar</Roll></a>
+              <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><MessageCircle size={18} /> <Roll>WhatsApp</Roll></a>
             </div>
           </Reveal>
         </div>

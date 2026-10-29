@@ -3,20 +3,18 @@
 import { useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
-import { photos } from "@/content/photos";
-import { Photo } from "./Photo";
 import { Reveal, SectionHead, useRichMotion } from "./ui";
 
 const steps = [
-  { title: "Agendamento online", text: "Escolha o motivo e o melhor horário em menos de 1 minuto. Você recebe a confirmação pelo WhatsApp.", photo: photos.stepBook },
-  { title: "Avaliação e diagnóstico", text: "Conversa, exame clínico e, se preciso, exames complementares, para entender o seu caso por inteiro.", photo: photos.stepExam },
-  { title: "Plano de tratamento", text: "Uma proposta clara, por etapas e com prioridades, explicada com calma antes de qualquer decisão.", photo: photos.stepPlan },
-  { title: "Acompanhamento", text: "Cuidado contínuo para manter a saúde bucal e os resultados ao longo do tempo.", photo: photos.stepCare },
+  { title: "Agendamento online", text: "Escolha o motivo e o melhor horário em menos de 1 minuto. A clínica confirma pelo WhatsApp." },
+  { title: "Avaliação e diagnóstico", text: "Conversa, exame clínico e, se preciso, exames complementares." },
+  { title: "Plano de tratamento", text: "Uma proposta clara, por etapas, explicada sem pressa." },
+  { title: "Acompanhamento", text: "Retornos programados para cuidar do sorriso ao longo do tempo." },
 ];
 const pad = (n: number) => String(n + 1).padStart(2, "0");
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-// Estilo "Process" do template de referência: 3 colunas (lista, foto, texto) fixas na tela; o scroll avança os passos.
+// Duas colunas, só texto: lista de passos à esquerda; painel do passo ativo à direita (seção fixa, avança com o scroll ou clique).
 function Process() {
   const ref = useRef<HTMLDivElement>(null);
   const [i, setI] = useState(0);
@@ -34,51 +32,47 @@ function Process() {
   return (
     <div ref={ref} style={{ height: `${steps.length * 80}vh` }} className="relative">
       <div className="sticky top-0 flex h-screen items-center">
-        <div className="container-x grid w-full grid-cols-[0.9fr_1fr_1fr] items-center gap-12">
+        <div className="container-x grid w-full grid-cols-[0.9fr_1.1fr] items-center gap-16">
           <ol aria-label="Passos">
             {steps.map((s, k) => (
               <li key={s.title}>
                 <button onClick={() => goTo(k)} aria-current={i === k} className={`flex w-full items-center gap-4 py-3 text-left transition-all duration-300 ${i === k ? "text-ink" : "text-ink/30 hover:text-ink/60"}`}>
-                  <ArrowRight size={22} className={`shrink-0 text-brand transition-all ${i === k ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"}`} />
-                  <span className="num text-[13px]">{pad(k)}</span>
-                  <span className="font-serif text-[clamp(26px,2.6vw,36px)] leading-[1.05]">{s.title}</span>
+                  <ArrowRight size={24} className={`shrink-0 text-brand transition-all ${i === k ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"}`} />
+                  <span className="num text-[15px]">{pad(k)}</span>
+                  <span className="font-serif text-[clamp(32px,3.2vw,40px)] leading-[1.05]">{s.title}</span>
                 </button>
               </li>
             ))}
           </ol>
 
-          <div className="relative h-[60vh] w-full">
-            {steps.map((s, k) => (
-              <motion.div
-                key={s.title}
-                className="absolute inset-0"
-                style={{ zIndex: k }}
-                initial={false}
-                animate={{ clipPath: k <= i ? "inset(0% 0 0 0)" : "inset(100% 0 0 0)" }}
-                transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}
-                aria-hidden={k !== i}
-              >
-                <Photo src={s.photo.src} alt={s.photo.alt} tone={k} sizes="34vw" className="h-full w-full rounded-[28px]" />
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="min-h-[260px]">
+          <div className="min-h-[340px]">
             <AnimatePresence mode="wait">
               <motion.div key={i}>
-                <p className="num text-[14px] text-muted">Passo {pad(i)}</p>
-                <h3 className="mt-3 text-[clamp(36px,3.6vw,52px)] leading-[1]">
+                <p className="eyebrow">Passo {pad(i)}</p>
+                <h3 className="mt-5 text-[clamp(48px,4.6vw,64px)] leading-[1]">
                   <span className="block overflow-hidden pb-[0.08em]">
                     <motion.span className="block" initial={{ y: "112%" }} animate={{ y: "0%" }} exit={{ y: "-112%" }} transition={{ duration: 0.5, ease }}>
                       {steps[i].title}
                     </motion.span>
                   </span>
                 </h3>
-                <motion.p className="t-body mt-5" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
-                  {steps[i].text}
-                </motion.p>
+                <span className="mt-6 block overflow-hidden">
+                  <motion.p className="t-lead !text-[18px]" initial={{ y: "120%" }} animate={{ y: "0%" }} exit={{ y: "-120%" }} transition={{ duration: 0.5, delay: 0.08, ease }}>
+                    {steps[i].text}
+                  </motion.p>
+                </span>
               </motion.div>
             </AnimatePresence>
+
+            {/* contador de progresso com barra dourada */}
+            <div className="mt-12 max-w-sm">
+              <p className="num-serif font-serif text-[32px] leading-none text-brand">
+                {pad(i)} <span className="text-ink/30">/ {String(steps.length).padStart(2, "0")}</span>
+              </p>
+              <div className="mt-4 h-px w-full bg-line">
+                <motion.div style={{ scaleX: scrollYProgress, transformOrigin: "left" }} className="h-px bg-accent" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -86,22 +80,19 @@ function Process() {
   );
 }
 
-function StepCards() {
+function StepList() {
   return (
-    <div className="container-x mt-12 space-y-6">
+    <ol className="container-x mt-12 divide-y divide-line border-y border-line">
       {steps.map((s, k) => (
-        <Reveal key={s.title}>
-          <article className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface shadow-[var(--shadow-soft)]">
-            <Photo reveal src={s.photo.src} alt={s.photo.alt} tone={k} sizes="100vw" className="aspect-[16/10] w-full" />
-            <div className="p-6">
-              <p className="num text-[13px] text-muted">Passo {pad(k)}</p>
-              <h3 className="t-h3 mt-2">{s.title}</h3>
-              <p className="t-body mt-3">{s.text}</p>
-            </div>
-          </article>
-        </Reveal>
+        <li key={s.title}>
+          <Reveal className="py-8">
+            <p className="num-serif font-serif text-[40px] leading-none text-brand">{pad(k)}</p>
+            <h3 className="t-h3 mt-3">{s.title}</h3>
+            <p className="t-body mt-3">{s.text}</p>
+          </Reveal>
+        </li>
       ))}
-    </div>
+    </ol>
   );
 }
 
@@ -112,7 +103,7 @@ export function Journey() {
       <div className="container-x">
         <SectionHead eyebrow="Como funciona" title={<>Da primeira mensagem ao <em className="ac">acompanhamento</em>.</>} />
       </div>
-      {rich ? <Process /> : <StepCards />}
+      {rich ? <Process /> : <StepList />}
       <div className="pb-20 md:pb-28" />
     </section>
   );

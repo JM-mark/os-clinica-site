@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { photos, type SitePhoto } from "@/content/photos";
 import { Photo } from "./Photo";
-import { Reveal } from "./ui";
+import { Reveal, Roll } from "./ui";
 import { Magnetic } from "./Interactions";
 import { useBooking } from "./Providers";
 
@@ -117,7 +117,7 @@ export function Concerns() {
                   <div className="mt-8">
                     <Magnetic>
                       <button onClick={() => startBooking(c.treatment)} className="btn btn-primary">
-                        Agendar avaliação
+                        <Roll>Agendar avaliação</Roll>
                       </button>
                     </Magnetic>
                   </div>

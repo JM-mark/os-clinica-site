@@ -38,26 +38,34 @@ export function CustomCursor() {
   const x = useSpring(useMotionValue(-100), { stiffness: 500, damping: 40, mass: 0.3 });
   const y = useSpring(useMotionValue(-100), { stiffness: 500, damping: 40, mass: 0.3 });
   const [label, setLabel] = useState<string | null>(null);
+  // Só aparece depois do primeiro movimento; some ao sair da janela ou quando a aba perde o foco.
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (!fine) return;
     document.documentElement.classList.add("has-cursor");
+    const hide = () => setVisible(false);
     const move = (e: PointerEvent) => {
+      setVisible(true);
       x.set(e.clientX);
       y.set(e.clientY);
       const el = (e.target as HTMLElement | null)?.closest?.("[data-cursor]") as HTMLElement | null;
       setLabel(el?.dataset.cursor ?? null);
     };
     window.addEventListener("pointermove", move, { passive: true });
+    document.documentElement.addEventListener("pointerleave", hide);
+    window.addEventListener("blur", hide);
     return () => {
       window.removeEventListener("pointermove", move);
+      document.documentElement.removeEventListener("pointerleave", hide);
+      window.removeEventListener("blur", hide);
       document.documentElement.classList.remove("has-cursor");
     };
   }, [fine, x, y]);
 
   if (!fine) return null;
   return (
-    <motion.div aria-hidden style={{ x, y }} className="pointer-events-none fixed left-0 top-0 z-[120]">
+    <motion.div aria-hidden style={{ x, y, opacity: visible ? 1 : 0 }} className="pointer-events-none fixed left-0 top-0 z-[120] transition-opacity duration-200">
       <motion.div
         animate={{ width: label ? 72 : 10, height: label ? 72 : 10 }}
         transition={{ type: "spring", stiffness: 380, damping: 26 }}

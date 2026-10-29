@@ -2,20 +2,21 @@
 
 import { useEffect, useRef } from "react";
 import { animate, motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { photos, type SitePhoto } from "@/content/photos";
+import { beforeAfterPairs } from "@/content/photos";
 import { Photo } from "./Photo";
 import { Magnetic } from "./Interactions";
 import { useBooking } from "./Providers";
-import { useRichMotion } from "./ui";
+import { Roll, useRichMotion } from "./ui";
 
-// O "antes" é uma SIMULAÇÃO: a mesma foto com filtro CSS (como o template de referência faz).
-// TODO trocar por pares reais autorizados pelo paciente (Resolução CFO 196/2019) ou desligar FEATURES.beforeAfter.
-const cases: { title: string; photo: SitePhoto; filter: string }[] = [
-  { title: "Clareamento dental", photo: photos.baWhitening, filter: "sepia(.5) saturate(1.4) brightness(.92) contrast(.95)" },
-  { title: "Lentes de contato dental", photo: photos.baLenses, filter: "sepia(.4) saturate(1.25) brightness(.9) hue-rotate(-6deg)" },
-  { title: "Restauração estética", photo: photos.baRestoration, filter: "sepia(.45) saturate(1.3) brightness(.88)" },
-  { title: "Facetas", photo: photos.baVeneers, filter: "sepia(.38) saturate(1.2) brightness(.93) contrast(.96)" },
-];
+// Os pares são imagens GERADAS (mesma pessoa, só os dentes mudam), em public/antes-depois/<slug>-antes.webp e -depois.webp.
+// Antes de publicar no domínio oficial, trocar por casos reais autorizados pelos pacientes (CFO, Res. 196/2019)
+// ou manter como demonstração de tratamento.
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const cases = beforeAfterPairs.map((c) => ({
+  title: c.title,
+  before: { src: `${BASE}/antes-depois/${c.slug}-antes.webp`, alt: c.altBefore },
+  after: { src: `${BASE}/antes-depois/${c.slug}-depois.webp`, alt: c.altAfter },
+}));
 
 function ToothIcon() {
   return (
@@ -25,7 +26,7 @@ function ToothIcon() {
   );
 }
 
-function Comparer({ title, photo, filter, index }: { title: string; photo: SitePhoto; filter: string; index: number }) {
+function Comparer({ title, before, after, index }: { title: string; before: { src: string; alt: string }; after: { src: string; alt: string }; index: number }) {
   const reduce = useReducedMotion();
   const rich = useRichMotion();
   const wrap = useRef<HTMLDivElement>(null);
@@ -66,10 +67,10 @@ function Comparer({ title, photo, filter, index }: { title: string; photo: SiteP
           className="relative aspect-[4/5] w-full select-none overflow-hidden rounded-[24px] border border-white/60 shadow-[var(--shadow-soft)]"
         >
           <div className="absolute inset-0">
-            <Photo src={photo.src} alt={`${photo.alt} (depois)`} tone={index} sizes="(min-width: 1024px) 30vw, 100vw" className="h-full w-full" />
+            <Photo src={after.src} alt={after.alt} tone={index} sizes="(min-width: 1024px) 30vw, 100vw" className="h-full w-full" />
           </div>
-          <motion.div style={{ clipPath: clip, filter }} className="absolute inset-0" aria-hidden>
-            <Photo src={photo.src} alt="" tone={index} sizes="(min-width: 1024px) 30vw, 100vw" className="h-full w-full" />
+          <motion.div style={{ clipPath: clip }} className="absolute inset-0" aria-hidden>
+            <Photo src={before.src} alt="" tone={index} sizes="(min-width: 1024px) 30vw, 100vw" className="h-full w-full" />
           </motion.div>
 
           <span className="absolute left-4 top-4 z-10 rounded-full bg-black/50 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-white backdrop-blur">Antes</span>
@@ -97,28 +98,27 @@ function Comparer({ title, photo, filter, index }: { title: string; photo: SiteP
         </div>
         <figcaption className="mt-5">
           <span className="block font-serif text-[clamp(32px,3vw,40px)] leading-[1.02]">{title}</span>
-          <span className="mt-2 block text-[11px] font-medium uppercase tracking-[0.14em] text-muted">Simulação ilustrativa</span>
         </figcaption>
       </figure>
     </motion.div>
   );
 }
 
-function Title({ blur }: { blur?: boolean }) {
+function Title() {
   const { startBooking } = useBooking();
   return (
     <div className="mx-auto max-w-[44rem] px-5 text-center">
       <p className="eyebrow">Transformações</p>
       <h2 className="t-h2 mt-5">
-        Sorrisos <em className="ac">que mudam</em>.
+        Pequenos detalhes, <em className="ac">grandes</em> mudanças.
       </h2>
       <p className="t-lead mx-auto mt-6">
-        Arraste a linha de cada foto e compare. São simulações ilustrativas para mostrar como o cuidado planejado pode transformar o sorriso, sem prometer resultado.
+        Arraste a linha e veja como cada tratamento atua no sorriso: restauração, implante, clareamento e alinhadores. Na avaliação, mostramos o caminho indicado para você.
       </p>
       <div className="mt-8 flex justify-center">
         <Magnetic>
-          <button onClick={() => startBooking()} className="btn btn-primary" data-blur={blur ? "1" : undefined}>
-            Agendar avaliação
+          <button onClick={() => startBooking()} className="btn btn-primary">
+            <Roll>Agendar avaliação</Roll>
           </button>
         </Magnetic>
       </div>
@@ -135,12 +135,6 @@ export function BeforeAfter() {
   const op = useTransform(scrollYProgress, [0.08, 0.65], [1, 0.35]);
   const filter = useTransform(blur, (b) => `blur(${b}px)`);
 
-  const note = (
-    <p className="mx-auto max-w-2xl px-5 text-center text-[13px] leading-relaxed text-muted">
-      Imagens ilustrativas. Casos reais são publicados apenas com autorização do paciente, conforme o CFO. Os resultados variam de pessoa para pessoa.
-    </p>
-  );
-
   if (!rich) {
     return (
       <section id="antes-depois" className="py-20 md:py-28">
@@ -150,7 +144,6 @@ export function BeforeAfter() {
             <Comparer key={c.title} index={i} {...c} />
           ))}
         </div>
-        <div className="mt-10">{note}</div>
       </section>
     );
   }
@@ -158,7 +151,7 @@ export function BeforeAfter() {
   return (
     <section id="antes-depois" ref={ref} className="relative">
       <motion.div style={{ filter, opacity: op }} className="sticky top-0 z-0 grid h-screen place-items-center">
-        <Title blur />
+        <Title />
       </motion.div>
       {/* cards sobem em ziguezague por cima do título fixo */}
       <div className="pointer-events-none relative z-10 -mt-[100vh] pb-[18vh] pt-[70vh]">
@@ -170,7 +163,7 @@ export function BeforeAfter() {
           ))}
         </div>
       </div>
-      <div className="relative z-10 pb-24">{note}</div>
+      <div className="relative z-10 pb-24" />
     </section>
   );
 }

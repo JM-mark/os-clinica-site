@@ -4,10 +4,9 @@ import { useRef } from "react";
 import { MessageCircle } from "lucide-react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useBooking } from "./Providers";
-import { Photo } from "./Photo";
 import { Magnetic } from "./Interactions";
-import { useRichMotion } from "./ui";
-import { photos } from "@/content/photos";
+import { Roll, useRichMotion } from "./ui";
+import { MONO_O, MONO_S, MONO_TRANSFORM } from "./monogramPaths";
 import { whatsappUrl } from "@/config";
 
 type W = { t: string; ac?: boolean };
@@ -16,23 +15,43 @@ const lines: W[][] = [
   [{ t: "do" }, { t: "cuidado", ac: true }, { t: "ao" }, { t: "sorriso", ac: true }],
 ];
 
-// Selo dourado com texto circular girando devagar e o monograma no centro.
-function Seal() {
-  const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+// Logo: disco sálvia + monograma OS. No primeiro carregamento o monograma se desenha em traço dourado (1,2s) antes de preencher.
+// TODO trocar pelo arquivo oficial da clínica (public/brand/logo-os.svg) quando chegar; hoje é a recriação vetorial do monograma.
+function LogoMark({ reduce }: { reduce: boolean }) {
   return (
-    <div className="relative h-[104px] w-[104px] sm:h-[124px] sm:w-[124px]" aria-hidden>
-      <svg viewBox="0 0 120 120" className="absolute inset-0 h-full w-full animate-[spin_26s_linear_infinite]">
-        <defs>
-          <path id="seal-circle" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0" />
-        </defs>
-        <circle cx="60" cy="60" r="60" fill="#C8A97E" />
-        <text fontSize="9.2" fontWeight="500" letterSpacing="2.1" fill="#2B3326" style={{ fontFamily: "var(--font-sans-body), sans-serif" }}>
-          <textPath href="#seal-circle">ODONTOLOGIA INTEGRADA · VALINHOS · ODONTOLOGIA INTEGRADA · VALINHOS ·</textPath>
-        </text>
-      </svg>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={`${base}/brand/symbol.svg`} alt="" width={52} height={52} className="absolute left-1/2 top-1/2 h-[46%] w-[46%] -translate-x-1/2 -translate-y-1/2" />
-    </div>
+    <svg viewBox="0 0 512 512" className="h-full w-full" role="img" aria-label="OS Clínica">
+      <circle cx="256" cy="256" r="256" fill="#B7BAA5" />
+      <g transform={MONO_TRANSFORM}>
+        {[MONO_O, MONO_S].map((d, i) => (
+          <motion.path
+            key={i}
+            d={d}
+            pathLength={1}
+            fill="#FFFFFF"
+            stroke="#C8A97E"
+            strokeWidth={4}
+            strokeDasharray={1}
+            initial={reduce ? false : { strokeDashoffset: 1, fillOpacity: 0 }}
+            animate={{ strokeDashoffset: 0, fillOpacity: 1 }}
+            transition={{ strokeDashoffset: { duration: 1.2, delay: 0.5, ease: "easeInOut" }, fillOpacity: { delay: 1.5, duration: 0.6 } }}
+          />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+// Anel de texto circular: gira devagar (40s por volta) e acompanha a rolagem da página.
+function TextRing() {
+  return (
+    <svg viewBox="0 0 300 300" className="h-full w-full animate-[spin_40s_linear_infinite]" aria-hidden>
+      <defs>
+        <path id="ring-path" d="M150 150 m-122 0 a122 122 0 1 1 244 0 a122 122 0 1 1 -244 0" />
+      </defs>
+      <text fontSize="13" fontWeight="500" letterSpacing="4.6" fill="#3F4A38" style={{ fontFamily: "var(--font-sans-body), sans-serif" }}>
+        <textPath href="#ring-path">ODONTOLOGIA INTEGRADA · VALINHOS · SP · ODONTOLOGIA INTEGRADA · VALINHOS · SP ·</textPath>
+      </text>
+    </svg>
   );
 }
 
@@ -43,9 +62,9 @@ export function Hero() {
   const rich = useRichMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 90]);
-  // O arco cresce ao rolar e a foto dentro dele dá um leve zoom (só desktop, sem reduced-motion).
+  // O arco cresce ao rolar; o anel e a logo giram de 0 a 180° junto com o scroll (só desktop, sem reduced-motion).
   const scale = useTransform(scrollYProgress, [0, 1], [1, rich ? 1.35 : 1]);
-  const inner = useTransform(scrollYProgress, [0, 1], [1, rich ? 1.12 : 1]);
+  const spin = useTransform(scrollYProgress, [0, 1], [0, rich ? 180 : 0]);
 
   let n = 0;
   return (
@@ -63,7 +82,7 @@ export function Hero() {
               {line.map((w) => {
                 const i = n++;
                 return (
-                  <span key={i} className="inline-block overflow-hidden pb-[0.1em] align-bottom" aria-hidden>
+                  <span key={i} className="inline-block overflow-hidden pb-[0.1em] align-bottom">
                     <motion.span
                       className={`inline-block ${w.ac ? "ac" : ""}`}
                       initial={reduce ? false : { y: "110%" }}
@@ -97,26 +116,29 @@ export function Hero() {
         >
           <Magnetic>
             <button onClick={() => startBooking()} className="btn bg-bg text-brand-dark hover:bg-white">
-              Agendar avaliação
+              <Roll>Agendar avaliação</Roll>
             </button>
           </Magnetic>
           <Magnetic>
             <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="btn border border-white/40 text-white hover:bg-white/10">
-              <MessageCircle size={18} strokeWidth={1.5} /> Falar no WhatsApp
+              <MessageCircle size={18} strokeWidth={1.5} /> <Roll>Falar no WhatsApp</Roll>
             </a>
           </Magnetic>
         </motion.div>
       </div>
 
-      <motion.div style={{ y, scale, transformOrigin: "bottom center" }} className="relative z-0 mx-auto mt-10 w-[min(440px,82vw)]">
-        <div className="relative h-[220px] sm:h-[340px]">
-          <div className="absolute inset-x-0 top-0 h-[520px] overflow-hidden rounded-t-[999px] border border-white/30 bg-sage-soft shadow-2xl">
-            <motion.div style={{ scale: inner }} className="absolute inset-0">
-              <Photo src={photos.consult.src} alt={photos.consult.alt} tone={0} priority sizes="440px" className="h-full w-full" />
-            </motion.div>
-          </div>
-          <div className="absolute -left-4 top-[28%] z-10 sm:-left-12">
-            <Seal />
+      {/* arco claro com a logo grande e o anel de texto; o arco cresce ao rolar */}
+      <motion.div style={{ y, scale, transformOrigin: "bottom center" }} className="relative z-0 mx-auto mt-10 w-[min(440px,86vw)]">
+        <div className="relative h-[300px] sm:h-[400px]">
+          <div className="absolute inset-x-0 top-0 h-[600px] overflow-hidden rounded-t-[999px] border border-white/40 bg-gradient-to-b from-[#F4F1E8] to-[#DDE0CE] shadow-2xl">
+            <div className="absolute left-1/2 top-[44px] h-[260px] w-[260px] -translate-x-1/2 sm:top-[56px] sm:h-[300px] sm:w-[300px]">
+              <motion.div style={{ rotate: spin }} className="absolute inset-0">
+                <TextRing />
+              </motion.div>
+              <motion.div style={{ rotate: spin }} className="absolute inset-[22%]">
+                <LogoMark reduce={!!reduce} />
+              </motion.div>
+            </div>
           </div>
         </div>
       </motion.div>

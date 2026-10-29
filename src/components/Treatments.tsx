@@ -145,7 +145,7 @@ function Showcase({ onOpen }: { onOpen: (t: Treatment) => void }) {
                 transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}
                 aria-hidden={k !== i}
               >
-                <Photo src={x.photo.src} alt={x.photo.alt} label={`${x.a} ${x.b}`} tone={k} sizes="42vw" className="h-full w-full rounded-[28px]" />
+                <Photo src={x.photo.src} pos={x.photo.pos} alt={x.photo.alt} label={`${x.a} ${x.b}`} tone={k} sizes="42vw" className="h-full w-full rounded-[28px]" />
               </motion.div>
             ))}
           </div>
@@ -161,7 +161,7 @@ function FeatureCards({ onOpen }: { onOpen: (t: Treatment) => void }) {
       {features.map((x, k) => (
         <Reveal key={x.id} delay={(k % 2) * 0.06}>
           <article className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface shadow-[var(--shadow-soft)]">
-            <Photo reveal src={x.photo.src} alt={x.photo.alt} label={`${pad(k + 1)} — ${pad(features.length)}`} tone={k} sizes="(min-width: 640px) 50vw, 100vw" className="aspect-[4/3] w-full" />
+            <Photo reveal src={x.photo.src} pos={x.photo.pos} alt={x.photo.alt} label={`${pad(k + 1)} — ${pad(features.length)}`} tone={k} sizes="(min-width: 640px) 50vw, 100vw" className="aspect-[4/3] w-full" />
             <div className="p-6">
               <h3 className="t-h3">
                 {x.a} <em className="ac">{x.b}</em>

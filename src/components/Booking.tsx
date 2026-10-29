@@ -10,7 +10,7 @@ import { getSlots, isBookableDate, periods, type Slot } from "@/lib/availability
 import {
   bookingSchema, buildWhatsAppUrl, downloadIcs, formatDateBR, formatPhone, type BookingData,
 } from "@/lib/booking";
-import { Icon, Reveal } from "./ui";
+import { Icon, Reveal, Roll } from "./ui";
 import { useBooking } from "./Providers";
 
 const stepNames = ["Motivo", "Data e horário", "Seus dados", "Confirmação"];
@@ -304,11 +304,11 @@ export function Booking() {
 
               {step < 3 && (
                 <div className="mt-8 flex items-center justify-between gap-3">
-                  <button type="button" onClick={() => go(step - 1)} disabled={step === 0} className="btn btn-ghost disabled:invisible">Voltar</button>
+                  <button type="button" onClick={() => go(step - 1)} disabled={step === 0} className="btn btn-ghost disabled:invisible"><Roll>Voltar</Roll></button>
                   {step < 2 ? (
-                    <button type="button" onClick={() => go(step + 1)} className="btn btn-primary">Continuar</button>
+                    <button type="button" onClick={() => go(step + 1)} className="btn btn-primary"><Roll>Continuar</Roll></button>
                   ) : (
-                    <button type="submit" disabled={sending} className="btn btn-primary">{sending ? "Enviando…" : "Confirmar agendamento"}</button>
+                    <button type="submit" disabled={sending} className="btn btn-primary"><Roll>{sending ? "Enviando…" : "Confirmar agendamento"}</Roll></button>
                   )}
                 </div>
               )}

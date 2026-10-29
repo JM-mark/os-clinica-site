@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { MessageCircle, Plus, X } from "lucide-react";
 import { Logo, Lockup } from "./Logo";
 import { useBooking } from "./Providers";
+import { Roll } from "./ui";
 import { clinic, whatsappUrl } from "@/config";
 
 const links = [
@@ -57,10 +58,10 @@ export function Header() {
               aria-haspopup="dialog"
               className={`pill ${glass}`}
             >
-              <Plus size={16} strokeWidth={1.75} /> <span className="text-[14px]">Menu</span>
+              <Plus size={16} strokeWidth={1.75} /> <Roll>Menu</Roll>
             </button>
             <a href="#contato" className={`pill ${onField ? "pill-solid" : "pill-dark"} hidden sm:inline-flex`}>
-              Contato
+              <Roll>Contato</Roll>
             </a>
             <a
               href={whatsappUrl()}
@@ -90,7 +91,7 @@ export function Header() {
             <div className="container-x flex h-[76px] items-center justify-between">
               <Logo variant="white" />
               <button onClick={() => setOpen(false)} className="pill pill-glass" aria-label="Fechar menu">
-                <X size={16} strokeWidth={1.75} /> <span className="text-[14px]">Fechar</span>
+                <X size={16} strokeWidth={1.75} /> <Roll>Fechar</Roll>
               </button>
             </div>
             <div className="container-x grid gap-12 pb-16 pt-10 md:grid-cols-[1.4fr_1fr]">

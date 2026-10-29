@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Instrument_Sans, Instrument_Serif } from "next/font/google";
+import { Instrument_Serif, Jost } from "next/font/google";
 import "./globals.css";
 import { clinic, SITE_URL } from "@/config";
 import { Providers } from "@/components/Providers";
@@ -7,8 +7,7 @@ import { Providers } from "@/components/Providers";
 // Display: Instrument Serif (estreita, alto contraste); palavras de acento no itálico da mesma família.
 // (Libre Caslon Condensed, usada no Dentelle, não está no next/font.)
 const display = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-display", display: "swap" });
-const sans = Instrument_Sans({ subsets: ["latin"], variable: "--font-sans-body", display: "swap" });
-const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono-label", display: "swap" });
+const sans = Jost({ subsets: ["latin"], weight: ["300", "400", "500"], variable: "--font-sans-body", display: "swap" });
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -55,7 +54,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
+    <html lang="pt-BR" className={`${display.variable} ${sans.variable}`}>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <a
