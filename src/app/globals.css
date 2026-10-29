@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f7f5f1;
+  --surface: #ffffff;
+  --ink: #14181b;
+  --muted: #5b6259;
+  --brand: #3f4a38;
+  --brand-dark: #2b3326;
+  --sage: #bbbeaa;
+  --sage-soft: #e6e8dd;
+  --accent: #c8a97e;
+  --taupe: #b49d8d;
+  --field-from: #69765a;
+  --field-to: #323c2a;
+  --line: rgb(20 24 27 / 0.1);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-sage: var(--sage);
+  --color-sage-soft: var(--sage-soft);
+  --color-accent: var(--accent);
+  --color-taupe: var(--taupe);
+  --color-line: var(--line);
+  --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-display), ui-serif, Georgia, serif;
+  --font-accent: var(--font-display), ui-serif, Georgia, serif;
+  --font-mono: var(--font-mono-label), ui-monospace, monospace;
+  --radius-card: 24px;
+  --shadow-soft: 0 1px 2px rgb(20 24 27 / 0.04), 0 12px 32px -12px rgb(20 24 27 / 0.12);
+}
+
+html {
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  letter-spacing: -0.015em;
+  font-weight: 400;
+}
+
+/* palavras de acento em itálico (Instrument Serif) */
+em.ac, .ac {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+::selection {
+  background: var(--sage);
+  color: var(--brand-dark);
+}
+
+.container-x {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+@media (min-width: 768px) {
+  .container-x { padding-inline: 32px; }
+}
+
+@layer components {
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 14px 24px;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1;
+  transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+  cursor: pointer;
+  min-height: 48px;
+}
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 10px 24px -10px rgb(43 51 38 / 0.6); }
+.btn-ghost { background: transparent; color: var(--brand); border: 1px solid rgb(63 74 56 / 0.35); }
+.btn-ghost:hover { background: var(--sage-soft); }
+
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+.pill-glass { background: rgb(255 255 255 / 0.18); color: #fff; backdrop-filter: blur(10px); }
+.pill-glass:hover { background: rgb(255 255 255 / 0.3); }
+.pill-solid { background: var(--bg); color: var(--ink); }
+.pill-solid:hover { background: #fff; }
+.pill-dark { background: rgb(20 24 27 / 0.06); color: var(--ink); }
+.pill-dark:hover { background: rgb(20 24 27 / 0.12); }
+
+.field {
+  background: linear-gradient(180deg, var(--field-from) 0%, #4f5b42 50%, var(--field-to) 100%);
+}
+
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
