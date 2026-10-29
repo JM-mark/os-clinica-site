@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { MessageCircle } from "lucide-react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useBooking } from "./Providers";
+import { useRichMotion } from "./ui";
 import { whatsappUrl } from "@/config";
 
 type W = { t: string; ac?: boolean };
@@ -40,7 +41,10 @@ export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { startBooking } = useBooking();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const rich = useRichMotion();
   const y = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 90]);
+  // O arco cresce ao rolar (só desktop, sem reduced-motion).
+  const scale = useTransform(scrollYProgress, [0, 1], [1, rich ? 1.35 : 1]);
 
   let n = 0;
   return (
@@ -104,7 +108,7 @@ export function Hero() {
         </motion.div>
       </div>
 
-      <motion.div style={{ y }} className="relative z-0 mx-auto -mb-1 mt-10 h-[200px] w-full max-w-[560px] px-6 sm:h-[300px]">
+      <motion.div style={{ y, scale, transformOrigin: "bottom center" }} className="relative z-0 mx-auto -mb-1 mt-10 h-[200px] w-full max-w-[560px] px-6 sm:h-[300px]">
         <Focal />
       </motion.div>
     </section>

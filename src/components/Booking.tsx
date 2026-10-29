@@ -178,7 +178,7 @@ export function Booking() {
                   {step === 0 && (
                     <fieldset>
                       <legend className="font-serif text-[26px]">Qual o motivo da consulta?</legend>
-                      <div className="mt-5 grid max-h-[420px] gap-2.5 overflow-y-auto pr-1 sm:grid-cols-2">
+                      <div className="mt-5 grid max-h-[420px] gap-2.5 overflow-y-auto pb-12 pr-1 [mask-image:linear-gradient(to_bottom,black_82%,transparent)] sm:grid-cols-2">
                         {reasons.map((r) => (
                           <button type="button" key={r.id} onClick={() => pick(r.id)} aria-pressed={v.treatmentId === r.id}
                             className={`flex items-center gap-3 rounded-2xl border p-3.5 text-left transition ${v.treatmentId === r.id ? "border-brand bg-sage-soft" : "border-line bg-surface hover:border-brand/40"}`}>

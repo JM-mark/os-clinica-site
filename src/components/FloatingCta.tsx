@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CalendarCheck, MessageCircle, MessagesSquare, X } from "lucide-react";
 import { FEATURES, whatsappUrl } from "@/config";
@@ -17,13 +17,24 @@ const triage = [
 export function FloatingCta() {
   const { startBooking } = useBooking();
   const [chat, setChat] = useState(false);
+  // A barra mobile só aparece depois que os botões do hero saem da tela, para não cobri-los.
+  const [showBar, setShowBar] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShowBar(window.scrollY > window.innerHeight * 0.6);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
       {/* barra fixa mobile */}
-      <div className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-line bg-bg/90 p-3 backdrop-blur-xl md:hidden">
-        <button onClick={() => startBooking()} className="btn btn-primary flex-1"><CalendarCheck size={18} /> Agendar</button>
-        <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="btn btn-ghost flex-1"><MessageCircle size={18} /> WhatsApp</a>
+      <div
+        aria-hidden={!showBar}
+        className={`fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-line bg-bg/90 p-3 backdrop-blur-xl transition-transform duration-300 md:hidden ${showBar ? "translate-y-0" : "pointer-events-none translate-y-full"}`}
+      >
+        <button tabIndex={showBar ? 0 : -1} onClick={() => startBooking()} className="btn btn-primary flex-1"><CalendarCheck size={18} /> Agendar</button>
+        <a tabIndex={showBar ? 0 : -1} href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="btn btn-ghost flex-1"><MessageCircle size={18} /> WhatsApp</a>
       </div>
 
       {/* flutuantes desktop */}

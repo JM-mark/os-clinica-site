@@ -16,7 +16,12 @@ const nextConfig: NextConfig = {
       },
     },
   },
-  ...(pages ? { output: "export", basePath, images: { unoptimized: true }, trailingSlash: true } : {}),
+  ...(pages
+    ? { output: "export", basePath, images: { unoptimized: true }, trailingSlash: true }
+    : {
+        // Fotos livres da prévia (src/content/photos.ts). Pode remover quando todas forem locais em public/photos/.
+        images: { remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }] },
+      }),
   env: { NEXT_PUBLIC_BASE_PATH: basePath },
 };
 

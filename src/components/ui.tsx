@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   Activity, AlignHorizontalDistributeCenter, Anchor, Baby, Circle, ClipboardList, Gem, HeartPulse, Layers,
@@ -59,5 +60,23 @@ export function SectionHead({
       <h2 className="mt-3 text-[42px] leading-[1.02] md:text-[64px]">{title}</h2>
       {lead && <p className="mt-4 text-[17px] leading-relaxed text-muted">{lead}</p>}
     </Reveal>
+  );
+}
+
+// true só em telas >= 1024px e sem prefers-reduced-motion: liga as animações de scroll mais elaboradas.
+export function useRichMotion(): boolean {
+  return useSyncExternalStore(
+    (cb) => {
+      const a = window.matchMedia("(min-width: 1024px)");
+      const b = window.matchMedia("(prefers-reduced-motion: reduce)");
+      a.addEventListener("change", cb);
+      b.addEventListener("change", cb);
+      return () => {
+        a.removeEventListener("change", cb);
+        b.removeEventListener("change", cb);
+      };
+    },
+    () => window.matchMedia("(min-width: 1024px)").matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => false,
   );
 }

@@ -10,7 +10,7 @@ export default function Privacidade() {
     <main className="container-x max-w-3xl py-16">
       <Link href="/" aria-label="Voltar ao início"><Logo /></Link>
       {/* TODO revisar jurídico: texto modelo */}
-      <p className="mt-10 rounded-xl bg-sage-soft px-4 py-3 text-[13px] text-muted">Texto modelo. TODO revisar com assessoria jurídica antes de publicar.</p>
+      <p className="mt-10 rounded-xl bg-sage-soft px-4 py-3 text-[13px] text-muted">Texto modelo, sujeito a revisão jurídica antes da publicação oficial.</p>
       <h1 className="mt-6 text-[40px]">Política de Privacidade</h1>
       <div className="mt-6 space-y-5 leading-relaxed text-muted">
         <p><strong className="text-ink">Quem somos.</strong> A {clinic.name} ({clinic.descriptor}), {clinic.address.street}, {clinic.address.city}/{clinic.address.state}, é a controladora dos dados tratados neste site.</p>

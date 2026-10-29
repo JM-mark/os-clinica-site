@@ -2,64 +2,49 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ExternalLink, Mail, MapPin, MessageCircle, Phone, Plus, Star } from "lucide-react";
+import { ExternalLink, Mail, MapPin, MessageCircle, Phone, Plus } from "lucide-react";
 import { clinic, whatsappUrl } from "@/config";
 import { faq } from "@/content/faq";
 import { Photo } from "./Photo";
 import { Reveal, SectionHead } from "./ui";
 import { Logo } from "./Logo";
 
-export function InstagramSection() {
+export function SocialProof() {
   return (
     <section className="py-20 md:py-28">
       <div className="container-x">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <SectionHead eyebrow="Instagram" title={<>Acompanhe o dia a dia da <em className="ac">clínica</em>.</>} />
+        <SectionHead eyebrow="Quem já foi" title={<>Reconhecimento e <em className="ac">rotina</em> da clínica.</>} />
+        <div className="mt-12 grid gap-5 lg:grid-cols-2">
           <Reveal>
-            <a href={clinic.instagram} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
-              {clinic.instagramHandle} <ExternalLink size={16} />
-            </a>
+            <div className="flex h-full flex-col justify-between rounded-[var(--radius-card)] bg-brand p-8 text-white sm:p-10">
+              <p className="eyebrow !text-accent">Avaliações no Google</p>
+              <div className="my-10">
+                <p className="font-serif text-[96px] leading-none">{clinic.rating.value}</p>
+                <p className="mt-3 text-[15px] text-white/80">{clinic.rating.count} avaliações de pacientes (dado público do Google Maps)</p>
+              </div>
+              <a href={clinic.maps} target="_blank" rel="noopener noreferrer" className="btn w-full bg-bg text-brand-dark hover:bg-white sm:w-auto sm:self-start">
+                Ver avaliações no Google <ExternalLink size={16} />
+              </a>
+            </div>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <div className="h-full rounded-[var(--radius-card)] border border-line bg-surface p-6 shadow-[var(--shadow-soft)] sm:p-8">
+              <p className="eyebrow">Instagram</p>
+              <p className="mt-2 font-serif text-[32px] leading-tight">{clinic.instagramHandle}</p>
+              {/* TODO trocar por fotos reais dos posts (ou feed embed) */}
+              <div className="mt-6 grid grid-cols-3 gap-3">
+                {[0, 1, 2].map((t) => (
+                  <a key={t} href={clinic.instagram} target="_blank" rel="noopener noreferrer" aria-label="Abrir o Instagram da clínica">
+                    <Photo alt="Espaço reservado para uma publicação do Instagram" tone={t} className="aspect-square rounded-[16px] transition-transform duration-500 hover:scale-[1.03]" />
+                  </a>
+                ))}
+              </div>
+              <a href={clinic.instagram} target="_blank" rel="noopener noreferrer" className="btn btn-ghost mt-6">
+                Seguir no Instagram <ExternalLink size={16} />
+              </a>
+            </div>
           </Reveal>
         </div>
-        {/* TODO trocar por feed embed ou fotos reais dos posts */}
-        <div className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
-          {[0, 1, 2, 3, 2, 1].map((t, i) => (
-            <Reveal key={i} delay={(i % 3) * 0.06}>
-              <a href={clinic.instagram} target="_blank" rel="noopener noreferrer" aria-label="Ver publicação no Instagram">
-                <Photo alt={`Publicação ${i + 1} do Instagram da clínica`} label="Post" tone={t} className="aspect-square rounded-[20px] transition-transform duration-500 hover:scale-[1.02]" />
-              </a>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function Reviews() {
-  return (
-    <section className="bg-sage-soft/60 py-20 md:py-28">
-      <div className="container-x">
-        <SectionHead eyebrow="Avaliações" title={<>O que os pacientes <em className="ac">dizem</em>.</>} center />
-        <Reveal className="mt-8 text-center">
-          <p className="font-serif text-[56px] leading-none text-brand">{clinic.rating.value}<span className="ml-2 text-[20px] text-muted">/ 5</span></p>
-          <p className="mt-2 text-[14px] text-muted">{clinic.rating.count} avaliações no Google (dado público do Google Maps)</p>
-        </Reveal>
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
-          {[0, 1, 2].map((i) => (
-            <Reveal key={i} delay={i * 0.08}>
-              <figure className="h-full rounded-[var(--radius-card)] border border-dashed border-brand/30 bg-surface/70 p-7">
-                <div className="flex gap-1 text-accent" aria-hidden>{Array.from({ length: 5 }).map((_, k) => <Star key={k} size={16} />)}</div>
-                {/* TODO inserir avaliações reais do Google, com autorização. Não inventar depoimentos. */}
-                <blockquote className="mt-4 text-[15px] leading-relaxed text-muted">Espaço reservado para uma avaliação real do Google.</blockquote>
-                <figcaption className="mt-5 text-[13px] font-semibold">Nome do paciente</figcaption>
-              </figure>
-            </Reveal>
-          ))}
-        </div>
-        <Reveal className="mt-10 text-center">
-          <a href={clinic.maps} target="_blank" rel="noopener noreferrer" className="btn btn-primary">Ver avaliações no Google <ExternalLink size={16} /></a>
-        </Reveal>
       </div>
     </section>
   );

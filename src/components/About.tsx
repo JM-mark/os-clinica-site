@@ -1,4 +1,5 @@
 import { Photo } from "./Photo";
+import { photos } from "@/content/photos";
 import { Reveal, SectionHead } from "./ui";
 
 export function About() {
@@ -23,10 +24,10 @@ export function About() {
 
         <Reveal delay={0.1}>
           <div className="grid grid-cols-6 grid-rows-6 gap-3 md:gap-4">
-            <Photo alt="Recepção da clínica" label="Recepção" tone={1} className="col-span-4 row-span-4 aspect-[4/3] rounded-[24px]" />
-            <Photo alt="Sala de atendimento" label="Atendimento" tone={2} className="col-span-2 row-span-3 rounded-[24px]" />
-            <Photo alt="Equipamentos" label="Tecnologia" tone={3} className="col-span-2 row-span-3 rounded-[24px]" />
-            <Photo alt="Fachada da OS Clínica" label="Fachada" tone={0} className="col-span-4 row-span-2 rounded-[24px]" />
+            <Photo showLabelOnPhoto src={photos.reception.src} alt={photos.reception.alt} label="Recepção" tone={1} className="col-span-4 row-span-4 aspect-[4/3] rounded-[24px]" />
+            <Photo showLabelOnPhoto src={photos.care.src} alt={photos.care.alt} label="Atendimento" tone={2} className="col-span-2 row-span-3 rounded-[24px]" />
+            <Photo showLabelOnPhoto src={photos.room.src} alt={photos.room.alt} label="Consultório" tone={3} className="col-span-2 row-span-3 rounded-[24px]" />
+            <Photo showLabelOnPhoto src={photos.team.src} alt={photos.team.alt} label="Equipe" tone={0} className="col-span-4 row-span-2 rounded-[24px]" />
           </div>
         </Reveal>
       </div>

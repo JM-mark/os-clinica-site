@@ -17,15 +17,15 @@ const description =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: "OS Clínica — Odontologia Integrada em Valinhos/SP", template: "%s | OS Clínica" },
+  title: { default: "OS Clínica | Odontologia Integrada em Valinhos/SP", template: "%s | OS Clínica" },
   description,
   openGraph: {
-    title: "OS Clínica — Odontologia Integrada em Valinhos/SP",
+    title: "OS Clínica | Odontologia Integrada em Valinhos/SP",
     description,
     type: "website",
     locale: "pt_BR",
     siteName: "OS Clínica",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "OS Clínica — Odontologia Integrada em Valinhos/SP" }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "OS Clínica | Odontologia Integrada em Valinhos/SP" }],
   },
   icons: { icon: `${base}/icon.png`, apple: `${base}/apple-touch-icon.png` },
   alternates: { canonical: "/" },
@@ -36,7 +36,7 @@ export const viewport: Viewport = { themeColor: "#F7F5F1", width: "device-width"
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Dentist",
-  name: "OS Clínica — Odontologia Integrada",
+  name: "OS Clínica | Odontologia Integrada",
   url: SITE_URL,
   telephone: "+55-19-3869-2611",
   email: clinic.email,

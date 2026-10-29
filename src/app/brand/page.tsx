@@ -18,7 +18,7 @@ export default function Brand() {
 
       <section className="mt-14">
         <h2 className="text-[28px]">Logo</h2>
-        <p className="mt-2 text-muted">Wordmark provisório. TODO substituir pela logo oficial em public/brand/.</p>
+        <p className="mt-2 text-muted">Wordmark provisório, até a logo oficial chegar.</p>
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <div className="grid h-40 place-items-center rounded-3xl border border-line bg-surface"><Logo /></div>
           <div className="grid h-40 place-items-center rounded-3xl border border-line bg-surface"><Logo variant="symbol" /></div>
