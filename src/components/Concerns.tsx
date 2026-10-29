@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { photos, type SitePhoto } from "@/content/photos";
 import { Photo } from "./Photo";
 import { Reveal, Roll } from "./ui";
@@ -55,7 +56,7 @@ export function Concerns() {
 
   return (
     <section id="queixas" className="py-20 md:py-28">
-      <div className="container-x grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
+      <div className="container-x grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
         <div className="min-w-0 lg:sticky lg:top-28 lg:self-start">
           <Reveal>
             <p className="eyebrow">Por onde começar</p>
@@ -107,14 +108,18 @@ export function Concerns() {
                 key={c.id}
                 ref={(el) => { refs.current[i] = el; }}
                 data-i={i}
-                className="scroll-mt-40 overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface shadow-[var(--shadow-soft)]"
+                className="relative aspect-[4/5] scroll-mt-40 overflow-hidden rounded-[28px] border border-line bg-sage-soft shadow-[var(--shadow-soft)] sm:aspect-[4/3]"
               >
-                <Photo reveal src={c.photo.src} alt={c.photo.alt} label={c.title} tone={i} sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-[16/10] w-full" />
-                <div className="p-6 sm:p-9">
+                {/* a imagem do card ativo entra com leve zoom (1,04 → 1) */}
+                <motion.div className="absolute inset-0" animate={{ scale: active === i ? 1 : 1.04 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}>
+                  <Photo src={c.photo.src} alt={c.photo.alt} tone={i} sizes="(min-width: 1024px) 50vw, 100vw" className="h-full w-full" />
+                </motion.div>
+                {/* texto sobre a base da imagem, em degradê marfim que sobe */}
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#F4EFE4] via-[#F4EFE4]/92 to-transparent px-6 pb-6 pt-24 sm:px-9 sm:pb-8 sm:pt-32">
                   <p className="num text-[13px] text-muted">{String(i + 1).padStart(2, "0")} / 06</p>
-                  <h3 className="t-h3 mt-3">{c.title}</h3>
-                  <p className="mt-4 max-w-[28em] font-serif text-[22px] leading-[1.22] text-ink/80 sm:text-[26px]">{c.text}</p>
-                  <div className="mt-8">
+                  <h3 className="mt-2 text-[clamp(30px,3vw,40px)] leading-[1.02]">{c.title}</h3>
+                  <p className="mt-3 max-w-[30em] font-serif text-[20px] leading-[1.22] text-ink/85 sm:text-[24px]">{c.text}</p>
+                  <div className="mt-5">
                     <Magnetic>
                       <button onClick={() => startBooking(c.treatment)} className="btn btn-primary">
                         <Roll>Agendar avaliação</Roll>

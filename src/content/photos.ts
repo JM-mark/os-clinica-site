@@ -2,20 +2,21 @@
 // PRÉVIA: fotos livres do Unsplash (licença Unsplash), carregadas de images.unsplash.com.
 // TODO substituir pelas fotos reais da clínica: coloque os arquivos em public/photos/ e troque o `src`,
 // por exemplo src: "/photos/recepcao.jpg". Se uma foto não carregar, <Photo> mostra o placeholder.
-// Regra: cada foto aparece em um só lugar. Fotos de banco ficam só nas queixas ("O que te incomoda?"). A vitrine de tratamentos é só texto.
+// Regra: sem fotos de pessoas. Fotos de banco só nas queixas; a vitrine de tratamentos é só texto.
 
-const u = (id: string, w = 1400) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+const Q = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/queixas`;
 
 export type SitePhoto = { src?: string; alt: string; /** object-position do crop, ex.: "center 60%" */ pos?: string };
 
 export const photos = {
-  // Queixas ("O que te incomoda?")
-  missing: { src: u("photo-1790574318492-1e9149397f58"), alt: "Pessoa sorrindo, representando a reposição de dentes" },
-  chipped: { src: u("photo-1590718778567-5ad1d013e5ed"), alt: "Close de sorriso em avaliação odontológica" },
-  stains: { src: u("photo-1663182245833-7dd667277043"), alt: "Pessoa sorrindo com dentes claros" },
-  gums: { src: u("photo-1661438818937-437f1aeaf08e"), alt: "Paciente em avaliação da saúde da gengiva" },
-  sensitive: { src: u("photo-1681939282781-341ac4f61996"), alt: "Paciente em consulta para avaliar dor e sensibilidade" },
-  crooked: { src: u("photo-1609840114035-3c981b782dfe"), alt: "Sorriso em avaliação ortodôntica" },
+  // Queixas ("O que te incomoda?"): fotos clínicas e de modelos, SEM pessoas, baixadas do Unsplash (licença Unsplash)
+  // e salvas em public/queixas/ (WebP 1600×1200 e -800). TODO trocar pelas fotos reais da clínica, se houver.
+  missing: { src: `${Q}/queixa-falta-dente.webp`, alt: "Modelo de arcada com um dente ausente e um implante ao lado" },
+  chipped: { src: `${Q}/queixa-dente-quebrado.webp`, alt: "Close dos dentes posteriores com desgaste e fissuras no esmalte" },
+  stains: { src: `${Q}/queixa-manchados.webp`, alt: "Close dos dentes com tom amarelado" },
+  gums: { src: `${Q}/queixa-gengiva.webp`, alt: "Close dos dentes com a gengiva avermelhada" },
+  sensitive: { src: `${Q}/queixa-sensibilidade.webp`, alt: "Close da região dos dentes e da gengiva sendo avaliada com uma sonda" },
+  crooked: { src: `${Q}/queixa-desalinhados.webp`, alt: "Close dos dentes apinhados e desalinhados" },
 } satisfies Record<string, SitePhoto>;
 
 // Antes/depois: imagens GERADAS (mesma pessoa, só os dentes mudam), salvas em public/antes-depois/.
