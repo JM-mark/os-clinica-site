@@ -48,14 +48,14 @@ Marca primeiro: sálvia da logo + dourado. Texto branco sobre `field` ≥ 4,5:1 
 Container 1200px. Hero 100svh com campo verde e arco com foto. Seções alternam `bg` e `sage-soft/60`; agendamento em `brand`. Hairline dourada desenhada entre seções. Grão de filme a 3%.
 
 # Photography
-Todas as fotos passam pelo componente `<Photo>`: `saturate(.88) contrast(1.02) sepia(.06)` + overlay da cor da marca (`soft-light`, 6%). Entram com máscara de baixo para cima e zoom 1,12 → 1. Fotos de banco só na vitrine de tratamentos e nas queixas; antes/depois são imagens geradas. Nenhuma foto se repete.
+Todas as fotos passam pelo componente `<Photo>`: `saturate(.88) contrast(1.02) sepia(.06)` + overlay da cor da marca (`soft-light`, 6%). Entram com máscara de baixo para cima e zoom 1,12 → 1. Fotos de banco só nas queixas; antes/depois são imagens geradas. Nenhuma foto se repete.
 
 # Components
 - Header: lockup com monograma em círculo 40px + "OS Clínica" (serif 22px) + "ODONTOLOGIA INTEGRADA" (10px, tracking aberto). No celular: monograma + nome, WhatsApp, Menu; sem "Contato" nem descritor.
 - Hero: logo grande no arco claro, cercada por anel de texto circular ("ODONTOLOGIA INTEGRADA · VALINHOS · SP ·"); o monograma se desenha em dourado na primeira carga; o arco cresce ao rolar.
 - Trust: 4 colunas com hairlines verticais (2×2 no celular).
 - Queixas: lista fixa em serif 44–52px (ativo 100%, outros 28%); no celular, carrossel de chips.
-- Vitrine: foto 42% da largura, 72vh; título 96px; "Saiba mais" com sublinhado animado.
+- Vitrine: só texto (sem fotos): contador "01 — 05", título grande em duas linhas e "Saiba mais" com sublinhado animado; no celular, lista vertical numerada.
 - Antes/depois: sticky com título que desfoca; 4 cards em ziguezague; alça de vidro com dente. Imagens geradas (flag FEATURES.beforeAfter, hoje desligada até os arquivos existirem).
 - Como funciona: 2 colunas só com texto (lista de passos + painel do passo ativo com contador 01 / 04 e barra dourada); no celular, lista vertical.
 - FAQ: perguntas serif 24–28px, "+" que gira para "×".
@@ -68,10 +68,9 @@ Regra geral: Framer Motion; efeitos elaborados só no desktop (>= 1024px) e sem 
 - Hero: entrada por palavra; arco cresce 1 → 1,35; anel de texto gira 40s por volta e, com a logo, gira 0 → 180° com o scroll; monograma desenhado em traço dourado (1,2s). Reduced-motion: estático.
 - Cursor: invisível até o primeiro `pointermove`; some ao sair da janela e ao perder o foco; nunca em toque (`hover: none`) nem com reduced-motion.
 - Statement: frase que acende palavra por palavra no scroll.
-- Marquee de especialidades entre Statement e Queixas; inverte o sentido quando o scroll inverte.
 - Fotos: reveal por máscara (clip-path) + zoom 1,12 → 1.
 - Queixas: lista fixa + IntersectionObserver; clicar rola até o card.
-- Vitrine: contador com giro vertical (odômetro), troca de foto em cortina (clip-path), título por linha com máscara.
+- Vitrine (só texto): contador com giro vertical (odômetro), título por linha com máscara, barra dourada de progresso.
 - Antes/depois: título fixo que desfoca (0 → 14px) e esmaece (1 → 0,35) conforme os cards sobem; parallax e rotação ±1° por card; passeio automático do divisor uma vez (50 → 30 → 70 → 50, 2,2s).
 - Como funciona: passos pelo scroll (seção fixa) ou clique; o texto troca com máscara por linha.
 - Nota 4,8: contador de 0,0 a 4,8 e estrelas acendendo em sequência.

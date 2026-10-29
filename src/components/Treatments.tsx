@@ -4,20 +4,18 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Check, X } from "lucide-react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { treatments, type Treatment } from "@/content/treatments";
-import { photos, type SitePhoto } from "@/content/photos";
 import { Icon, Reveal, SectionHead, useRichMotion } from "./ui";
-import { Photo } from "./Photo";
 import { useBooking } from "./Providers";
 
-type Feature = { id: string; a: string; b: string; photo: SitePhoto };
+type Feature = { id: string; a: string; b: string };
 
 // 5 destaques da vitrine. `id` aponta para src/content/treatments.ts.
 const features: Feature[] = [
-  { id: "clinica-geral", a: "Prevenção", b: "e cuidado", photo: photos.prevention },
-  { id: "clareamento", a: "Clareamento", b: "dental", photo: photos.whitening },
-  { id: "implantes", a: "Implantes", b: "dentários", photo: photos.implants },
-  { id: "ortodontia", a: "Ortodontia", b: "e alinhadores", photo: photos.ortho },
-  { id: "dentistica", a: "Estética", b: "do sorriso", photo: photos.aesthetic },
+  { id: "clinica-geral", a: "Prevenção", b: "e cuidado" },
+  { id: "clareamento", a: "Clareamento", b: "dental" },
+  { id: "implantes", a: "Implantes", b: "dentários" },
+  { id: "ortodontia", a: "Ortodontia", b: "e alinhadores" },
+  { id: "dentistica", a: "Estética", b: "do sorriso" },
 ];
 const featureIds = new Set(features.map((f) => f.id));
 const byId = (id: string) => treatments.find((t) => t.id === id)!;
@@ -97,7 +95,7 @@ function Showcase({ onOpen }: { onOpen: (t: Treatment) => void }) {
   return (
     <div ref={ref} style={{ height: `${features.length * 85}vh` }} className="relative">
       <div className="sticky top-0 flex h-screen items-center">
-        <div className="container-x grid w-full grid-cols-[0.62fr_1fr_1fr] items-center gap-10">
+        <div className="container-x grid w-full grid-cols-[0.7fr_1.3fr] items-center gap-16">
           <div>
             {/* contador com giro vertical (odômetro) */}
             <p className="num-serif flex items-baseline whitespace-nowrap font-serif text-[clamp(60px,5.6vw,88px)] leading-none text-brand" aria-live="polite" aria-label={`${pad(i + 1)} de ${pad(features.length)}`}>
@@ -119,7 +117,7 @@ function Showcase({ onOpen }: { onOpen: (t: Treatment) => void }) {
           <div className="min-h-[340px]">
             <AnimatePresence mode="wait">
               <motion.div key={f.id}>
-                <h3 className="text-[clamp(64px,6.6vw,96px)] leading-[0.96]">
+                <h3 className="text-[clamp(72px,8vw,120px)] leading-[0.94]">
                   <span className="block overflow-hidden pb-[0.08em]"><motion.span className="block" {...mask(0)}>{f.a}</motion.span></span>
                   <span className="block overflow-hidden pb-[0.08em]"><motion.span className="ac block" {...mask(0.08)}>{f.b}</motion.span></span>
                 </h3>
@@ -133,22 +131,6 @@ function Showcase({ onOpen }: { onOpen: (t: Treatment) => void }) {
             </AnimatePresence>
           </div>
 
-          {/* fotos empilhadas: a nova entra em cortina (clip-path), de baixo para cima */}
-          <div className="relative h-[72vh] w-full">
-            {features.map((x, k) => (
-              <motion.div
-                key={x.id}
-                className="absolute inset-0"
-                style={{ zIndex: k }}
-                initial={false}
-                animate={{ clipPath: k <= i ? "inset(0% 0 0 0)" : "inset(100% 0 0 0)" }}
-                transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}
-                aria-hidden={k !== i}
-              >
-                <Photo src={x.photo.src} pos={x.photo.pos} alt={x.photo.alt} label={`${x.a} ${x.b}`} tone={k} sizes="42vw" className="h-full w-full rounded-[28px]" />
-              </motion.div>
-            ))}
-          </div>
         </div>
       </div>
     </div>
@@ -157,24 +139,24 @@ function Showcase({ onOpen }: { onOpen: (t: Treatment) => void }) {
 
 function FeatureCards({ onOpen }: { onOpen: (t: Treatment) => void }) {
   return (
-    <div className="container-x mt-12 grid gap-5 sm:grid-cols-2">
+    <ol className="container-x mt-12 divide-y divide-line border-y border-line">
       {features.map((x, k) => (
-        <Reveal key={x.id} delay={(k % 2) * 0.06}>
-          <article className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface shadow-[var(--shadow-soft)]">
-            <Photo reveal src={x.photo.src} pos={x.photo.pos} alt={x.photo.alt} label={`${pad(k + 1)} — ${pad(features.length)}`} tone={k} sizes="(min-width: 640px) 50vw, 100vw" className="aspect-[4/3] w-full" />
-            <div className="p-6">
-              <h3 className="t-h3">
-                {x.a} <em className="ac">{x.b}</em>
-              </h3>
-              <p className="t-body mt-3">{byId(x.id).short}</p>
-              <button onClick={() => onOpen(byId(x.id))} className="mt-5 inline-flex min-h-11 items-center gap-1.5 text-[16px] font-medium text-brand">
-                <span className="u-link pb-0.5">Saiba mais</span> <ArrowUpRight size={17} />
-              </button>
-            </div>
-          </article>
-        </Reveal>
+        <li key={x.id}>
+          <Reveal className="py-8">
+            <p className="num-serif font-serif text-[40px] leading-none text-brand">
+              {pad(k + 1)} <span className="text-ink/30">— {pad(features.length)}</span>
+            </p>
+            <h3 className="t-h3 mt-4">
+              {x.a} <em className="ac">{x.b}</em>
+            </h3>
+            <p className="t-body mt-3">{byId(x.id).short}</p>
+            <button onClick={() => onOpen(byId(x.id))} className="mt-5 inline-flex min-h-11 items-center gap-1.5 text-[16px] font-medium text-brand">
+              <span className="u-link pb-0.5">Saiba mais</span> <ArrowUpRight size={17} />
+            </button>
+          </Reveal>
+        </li>
       ))}
-    </div>
+    </ol>
   );
 }
 

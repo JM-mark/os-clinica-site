@@ -2,20 +2,13 @@
 // PRÉVIA: fotos livres do Unsplash (licença Unsplash), carregadas de images.unsplash.com.
 // TODO substituir pelas fotos reais da clínica: coloque os arquivos em public/photos/ e troque o `src`,
 // por exemplo src: "/photos/recepcao.jpg". Se uma foto não carregar, <Photo> mostra o placeholder.
-// Regra: cada foto aparece em um só lugar. Fotos de banco ficam só na vitrine de tratamentos e nas queixas.
+// Regra: cada foto aparece em um só lugar. Fotos de banco ficam só nas queixas ("O que te incomoda?"). A vitrine de tratamentos é só texto.
 
 const u = (id: string, w = 1400) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
 
 export type SitePhoto = { src?: string; alt: string; /** object-position do crop, ex.: "center 60%" */ pos?: string };
 
 export const photos = {
-  // Vitrine de tratamentos (5 destaques)
-  prevention: { src: u("photo-1606811842243-af7e16970c1f"), alt: "Dentista explicando o tratamento para a paciente na cadeira" },
-  // Close de sorriso com dentes claros em evidência, crop focado na boca
-  whitening: { src: u("photo-1663182234283-28941e7612da"), alt: "Close de sorriso com dentes claros", pos: "center 60%" },
-  implants: { src: u("photo-1777793389944-f7165259a05c"), alt: "Dentista mostrando um modelo anatômico de dente" },
-  ortho: { src: u("photo-1674775372046-ff6cd6cb8b68"), alt: "Paciente com aparelho ortodôntico sorrindo" },
-  aesthetic: { src: u("photo-1785860817740-c95735ba03b1"), alt: "Paciente sorrindo ao ver o resultado no espelho" },
   // Queixas ("O que te incomoda?")
   missing: { src: u("photo-1790574318492-1e9149397f58"), alt: "Pessoa sorrindo, representando a reposição de dentes" },
   chipped: { src: u("photo-1590718778567-5ad1d013e5ed"), alt: "Close de sorriso em avaliação odontológica" },
